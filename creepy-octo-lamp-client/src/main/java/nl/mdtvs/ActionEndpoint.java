@@ -14,13 +14,13 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
 @ClientEndpoint
-public class ChatClientEndpoint {
+public class ActionEndpoint {
 
     Session userSession = null;
     private MessageHandler messageHandler;
     private URI endpointURI;
 
-    public ChatClientEndpoint(URI uri) {
+    public ActionEndpoint(URI uri) {
         endpointURI = uri;
         try {
             connect(endpointURI);
@@ -66,7 +66,7 @@ public class ChatClientEndpoint {
             Thread.sleep(5000);
             connect(endpointURI);
         } catch (Exception ex) {
-            Logger.getLogger(ChatClientEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ActionEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             reconnect();
         }
     }
