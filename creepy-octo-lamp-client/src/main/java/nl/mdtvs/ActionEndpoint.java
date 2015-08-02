@@ -1,5 +1,7 @@
 package nl.mdtvs;
 
+import nl.mdtvs.modules.PropertiesRequest;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
@@ -30,9 +32,10 @@ public class ActionEndpoint {
     }
 
     @OnOpen
-    public void onOpen(Session userSession) {
+    public void onOpen(Session userSession) throws IOException {
         System.out.println("opening websocket");
         this.userSession = userSession;
+        sendMessage(PropertiesRequest.getJsonSystemProperties());
     }
 
     @OnClose

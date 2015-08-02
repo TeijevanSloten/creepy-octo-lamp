@@ -1,22 +1,17 @@
 package nl.ndts.models;
 
 import javax.websocket.Session;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WsSession {
 
-    private String id;
-    private Session session;
+    public String id;
+    public Session session;
+    public Map<String, String> properties = new HashMap<>();
 
     public WsSession(Session session) {
         this.id = session.getId();
         this.session = session;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public String getId() {
-        return id;
     }
 }
