@@ -1,18 +1,29 @@
 package nl.mdtvs;
 
-import javax.websocket.*;
+import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.websocket.ClientEndpoint;
+import javax.websocket.CloseReason;
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
 
 @ClientEndpoint
 public class ChatClientEndpoint {
 
     Session userSession = null;
     private MessageHandler messageHandler;
+    private URI endpointURI;
 
-    public ChatClientEndpoint(URI endpointURI) {
+    public ChatClientEndpoint(URI uri) {
+        endpointURI = uri;
         try {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(this, endpointURI);
+            connect(endpointURI);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -27,6 +38,7 @@ public class ChatClientEndpoint {
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
         System.out.println("closing websocket");
+        reconnect();
         this.userSession = null;
     }
 
@@ -43,6 +55,20 @@ public class ChatClientEndpoint {
 
     public void sendMessage(String message) {
         this.userSession.getAsyncRemote().sendText(message);
+    }
+
+    public void connect(URI uri) throws DeploymentException, IOException {
+        ContainerProvider.getWebSocketContainer().connectToServer(this, endpointURI);
+    }
+    
+    public void reconnect(){
+        try {
+            Thread.sleep(5000);
+            connect(endpointURI);
+        } catch (Exception ex) {
+            Logger.getLogger(ChatClientEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            reconnect();
+        }
     }
 
     public interface MessageHandler {
