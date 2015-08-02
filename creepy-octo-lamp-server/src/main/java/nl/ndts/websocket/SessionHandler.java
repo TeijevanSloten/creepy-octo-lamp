@@ -4,17 +4,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.enterprise.context.ApplicationScoped;
 import javax.json.JsonObject;
 import javax.websocket.Session;
 import nl.ndts.models.Device;
 
+@ApplicationScoped
 public class SessionHandler {
     private final Set<Session> sessions = new HashSet<>();
     private final Set<Device> devices = new HashSet<>();
-
-    public Set<Session> getSessions() {
-        return sessions;
-    }
 
     public void addSession(Session session) {
         sessions.add(session);
@@ -51,5 +49,9 @@ public class SessionHandler {
     }
 
     private void sendToSession(Session session, JsonObject message) {
+    }
+    
+    public void sendMessage(String message){
+        this.sessions.stream().forEach(session -> session.getAsyncRemote().sendText(message));
     }
 }

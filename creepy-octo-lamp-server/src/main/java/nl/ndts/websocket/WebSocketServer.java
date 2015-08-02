@@ -1,18 +1,12 @@
 package nl.ndts.websocket;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@ApplicationScoped
 @ServerEndpoint("/actions")
 public class WebSocketServer {
 
@@ -37,8 +31,5 @@ public class WebSocketServer {
     @OnMessage
     public void handleMessage(String message) {
         System.out.println("Received message: " + message);
-        sessionHandler.getSessions().stream().forEach(session -> {
-            session.getAsyncRemote().sendText(message);
-        });
     }
 }
