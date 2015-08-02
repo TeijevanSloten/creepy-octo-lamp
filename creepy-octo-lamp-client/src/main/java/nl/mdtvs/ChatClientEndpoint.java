@@ -38,8 +38,8 @@ public class ChatClientEndpoint {
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
         System.out.println("closing websocket");
-        reconnect();
         this.userSession = null;
+        reconnect();
     }
 
     @OnMessage
