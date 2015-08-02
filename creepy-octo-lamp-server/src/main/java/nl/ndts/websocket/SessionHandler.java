@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.enterprise.context.ApplicationScoped;
 import javax.json.JsonObject;
 import javax.websocket.Session;
 import nl.ndts.models.Device;
 
-@ApplicationScoped
 public class SessionHandler {
-    private final Set sessions = new HashSet<>();
-    private final Set devices = new HashSet<>();
+    private final Set<Session> sessions = new HashSet<>();
+    private final Set<Device> devices = new HashSet<>();
+
+    public List<Session> getSessions() {
+        return new ArrayList<>(sessions);
+    }
 
     public void addSession(Session session) {
         sessions.add(session);
@@ -24,7 +26,7 @@ public class SessionHandler {
         System.out.println("remove: "+ session);
     }
     
-    public List getDevices() {
+    public List<Device> getDevices() {
         return new ArrayList<>(devices);
     }
 
@@ -50,5 +52,4 @@ public class SessionHandler {
 
     private void sendToSession(Session session, JsonObject message) {
     }
-    
 }

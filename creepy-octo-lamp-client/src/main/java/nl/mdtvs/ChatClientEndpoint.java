@@ -1,14 +1,23 @@
 package nl.mdtvs;
 
-import javax.websocket.*;
+import java.io.IOException;
 import java.net.URI;
-import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.websocket.ClientEndpoint;
+import javax.websocket.CloseReason;
+import javax.websocket.ContainerProvider;
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
 
 @ClientEndpoint
 public class ChatClientEndpoint {
 
-    private Consumer<String> consumer;
-
+    private Session userSession;
+    
     public ChatClientEndpoint(final URI endpointURI) {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
@@ -20,20 +29,24 @@ public class ChatClientEndpoint {
 
     @OnOpen
     public void onOpen(final Session userSession) {
+        this.userSession = userSession;
     }
 
     @OnClose
     public void onClose(final Session userSession, final CloseReason reason) {
+        try {
+            this.userSession.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ChatClientEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @OnMessage
     public void onMessage(final String message) {
-        if (consumer != null) {
-            consumer.accept(message);
+        try {
+            this.userSession.getBasicRemote().sendText(message);
+        } catch (IOException ex) {
+            Logger.getLogger(ChatClientEndpoint.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public void addMessageHandler(final Consumer<String> consumer) {
-        this.consumer = consumer;
     }
 }
