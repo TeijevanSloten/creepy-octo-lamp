@@ -1,24 +1,15 @@
 package nl.mdtvs;
 
-import java.io.IOException;
+import javax.websocket.*;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.websocket.ClientEndpoint;
-import javax.websocket.CloseReason;
-import javax.websocket.ContainerProvider;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.WebSocketContainer;
 
 @ClientEndpoint
 public class ChatClientEndpoint {
 
-    private Session userSession;
-    
-    public ChatClientEndpoint(final URI endpointURI) {
+    Session userSession = null;
+    private MessageHandler messageHandler;
+
+    public ChatClientEndpoint(URI endpointURI) {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             container.connectToServer(this, endpointURI);
@@ -28,25 +19,34 @@ public class ChatClientEndpoint {
     }
 
     @OnOpen
-    public void onOpen(final Session userSession) {
+    public void onOpen(Session userSession) {
+        System.out.println("opening websocket");
         this.userSession = userSession;
     }
 
     @OnClose
-    public void onClose(final Session userSession, final CloseReason reason) {
-        try {
-            this.userSession.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ChatClientEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void onClose(Session userSession, CloseReason reason) {
+        System.out.println("closing websocket");
+        this.userSession = null;
     }
 
     @OnMessage
-    public void onMessage(final String message) {
-        try {
-            this.userSession.getBasicRemote().sendText(message);
-        } catch (IOException ex) {
-            Logger.getLogger(ChatClientEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+    public void onMessage(String message) {
+        if (this.messageHandler != null) {
+            this.messageHandler.handleMessage(message);
         }
+    }
+
+    public void addMessageHandler(MessageHandler msgHandler) {
+        this.messageHandler = msgHandler;
+    }
+
+    public void sendMessage(String message) {
+        this.userSession.getAsyncRemote().sendText(message);
+    }
+
+    public interface MessageHandler {
+
+        void handleMessage(String message);
     }
 }

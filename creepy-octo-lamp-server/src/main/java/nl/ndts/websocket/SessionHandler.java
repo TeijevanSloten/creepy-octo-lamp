@@ -12,8 +12,8 @@ public class SessionHandler {
     private final Set<Session> sessions = new HashSet<>();
     private final Set<Device> devices = new HashSet<>();
 
-    public List<Session> getSessions() {
-        return new ArrayList<>(sessions);
+    public Set<Session> getSessions() {
+        return sessions;
     }
 
     public void addSession(Session session) {

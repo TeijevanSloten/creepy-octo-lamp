@@ -36,13 +36,9 @@ public class WebSocketServer {
 
     @OnMessage
     public void handleMessage(String message) {
-        System.out.println("Sending message" + message);
-        sessionHandler.getSessions().stream().forEach( session -> {
-            try {
-                session.getBasicRemote().sendText(message);
-            } catch (IOException ex) {
-                Logger.getLogger(WebSocketServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        System.out.println("Received message: " + message);
+        sessionHandler.getSessions().stream().forEach(session -> {
+            session.getAsyncRemote().sendText(message);
         });
     }
 }
