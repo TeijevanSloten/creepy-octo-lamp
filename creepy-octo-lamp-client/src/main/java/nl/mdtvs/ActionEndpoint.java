@@ -21,8 +21,8 @@ public class ActionEndpoint {
     private URI endpointURI;
 
     public ActionEndpoint(URI uri) {
-        endpointURI = uri;
         try {
+            endpointURI = uri;
             connect(endpointURI);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -36,8 +36,8 @@ public class ActionEndpoint {
     }
 
     @OnClose
-    public void onClose(Session userSession, CloseReason reason) {
-        System.out.println("closing websocket");
+    public void onClose(CloseReason reason) {
+        System.out.println("closing websocket" + reason.getReasonPhrase());
         this.userSession = null;
         reconnect();
     }
@@ -49,19 +49,15 @@ public class ActionEndpoint {
         }
     }
 
-    public void addMessageHandler(MessageHandler msgHandler) {
-        this.messageHandler = msgHandler;
-    }
-
     public void sendMessage(String message) {
         this.userSession.getAsyncRemote().sendText(message);
     }
 
     public void connect(URI uri) throws DeploymentException, IOException {
-        ContainerProvider.getWebSocketContainer().connectToServer(this, endpointURI);
+        ContainerProvider.getWebSocketContainer().connectToServer(this, uri);
     }
-    
-    public void reconnect(){
+
+    public void reconnect() {
         try {
             Thread.sleep(5000);
             connect(endpointURI);
@@ -69,6 +65,10 @@ public class ActionEndpoint {
             Logger.getLogger(ActionEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             reconnect();
         }
+    }
+
+    public void addMessageHandler(MessageHandler msgHandler) {
+        this.messageHandler = msgHandler;
     }
 
     public interface MessageHandler {

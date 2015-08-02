@@ -1,4 +1,4 @@
-package nl.ndts;
+package nl.ndts.util;
 
 import nl.ndts.models.WsAction;
 import org.codehaus.jackson.map.ObjectMapper;

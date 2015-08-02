@@ -1,23 +1,18 @@
 package nl.ndts.websocket;
 
-import nl.ndts.ConvertObject;
-import nl.ndts.models.Device;
+import nl.ndts.util.ConvertObject;
 import nl.ndts.models.WsAction;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.json.JsonObject;
 import javax.websocket.Session;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @ApplicationScoped
 public class SessionHandler {
     private final Set<Session> sessions = new HashSet<>();
-    private final Set<Device> devices = new HashSet<>();
 
     public void addSession(Session session) {
         sessions.add(session);
@@ -29,31 +24,10 @@ public class SessionHandler {
         System.out.println("remove: " + session);
     }
 
-    public List<Device> getDevices() {
-        return new ArrayList<>(devices);
+    private void sendToAllConnectedSessions(WsAction message) {
     }
 
-    public void addDevice(Device device) {
-    }
-
-    public void removeDevice(int id) {
-    }
-
-    public void toggleDevice(int id) {
-    }
-
-    private Device getDeviceById(int id) {
-        return null;
-    }
-
-    private JsonObject createAddMessage(Device device) {
-        return null;
-    }
-
-    private void sendToAllConnectedSessions(JsonObject message) {
-    }
-
-    private void sendToSession(Session session, JsonObject message) {
+    private void sendToSession(Session session, WsAction message) {
     }
 
     public void sendAction(WsAction wsAction) throws JAXBException, IOException {
