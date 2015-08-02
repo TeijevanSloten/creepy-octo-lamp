@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Circuit Breaker implementation in Java EE</title>
         <script>
             window.onload = init;
             var socket = new WebSocket("ws://localhost:8080/creepy-octo-lamp-server/actions");
@@ -38,19 +37,17 @@
             }
 
             function removeDevice(element) {
-                var id = element;
                 var DeviceAction = {
                     action: "remove",
-                    id: id
+                    id: element
                 };
                 socket.send(JSON.stringify(DeviceAction));
             }
 
             function toggleDevice(element) {
-                var id = element;
                 var DeviceAction = {
                     action: "toggle",
-                    id: id
+                    id: element
                 };
                 socket.send(JSON.stringify(DeviceAction));
             }
@@ -115,16 +112,5 @@
         </script>
     </head>
     <body>
-        <div>
-            <h4>Resource links:</h4>
-            <ul>
-                <li><a href='./resources/caller/direct'>direct call supplier</a></li>
-                <li><a href='./resources/caller/cb'>call supplier via circuit breaker</a></li>
-                <li><a href='./resources/caller/cb_state'>get circuit breaker state</a></li>
-                <li><a href='./resources/callerAdvanced/cb'>call supplier via a configured circuit breaker</a></li>
-                <li><a href='./resources/callerAdvanced/cb_state'>get configured circuit breaker state</a></li>
-                <li><a href='./resources/supplier'>get or set slow supplier sleep time</a></li>
-            </ul>
-        </div>
     </body>
 </html>
