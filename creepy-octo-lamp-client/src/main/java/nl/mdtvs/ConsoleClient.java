@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class ConsoleClient {
+
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         try {
             ActionEndpoint clientEndPoint = new ActionEndpoint(new URI("ws://localhost:8080/creepy-octo-lamp-server/actions"));
