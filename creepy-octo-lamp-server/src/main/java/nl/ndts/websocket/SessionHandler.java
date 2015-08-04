@@ -41,13 +41,11 @@ public class SessionHandler {
 
     public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
         WsDevice wsd = new WsDevice(session);
-        wsd.setIp(ConvertObject.jsonStringToMap(jsonString).remove("IP"));
         wsd.setProperties(ConvertObject.jsonStringToMap(jsonString));
-
         devices.put(session.getId(), wsd);
     }
 
-    public Map<String, WsDevice> getSessions() {
+    public Map<String, WsDevice> getDevices() {
         return devices;
     }
 }

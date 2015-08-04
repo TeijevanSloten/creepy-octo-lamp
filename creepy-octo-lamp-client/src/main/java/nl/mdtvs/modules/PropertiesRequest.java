@@ -17,6 +17,7 @@ public class PropertiesRequest {
         Map<String, String> properties = new HashMap<>();
         System.getProperties().entrySet().stream().forEach(p -> properties.put((String) p.getKey(), (String) p.getValue()));
         properties.put("IP", Inet4Address.getLocalHost().getHostAddress());
+        properties.put("DEVICE_ID", "give the device a unique id to remember");
         return properties;
     }
 }

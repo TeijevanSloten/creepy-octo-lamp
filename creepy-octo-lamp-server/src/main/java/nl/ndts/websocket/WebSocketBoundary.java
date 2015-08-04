@@ -34,7 +34,7 @@ public class WebSocketBoundary {
     }
 
     @OnMessage
-    public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
+    public void onMessage(String jsonString, Session session) throws JAXBException, IOException {
         sessionHandler.handleMessage(jsonString, session);
     }
 }

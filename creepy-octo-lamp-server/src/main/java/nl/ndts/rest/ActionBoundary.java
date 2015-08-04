@@ -7,8 +7,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.xml.bind.JAXBException;
 import nl.ndts.models.WsAction;
+import nl.ndts.util.ConvertObject;
 import nl.ndts.websocket.SessionHandler;
-import org.codehaus.jackson.map.ObjectMapper;
 
 @Path("/action")
 public class ActionBoundary {
@@ -31,6 +31,6 @@ public class ActionBoundary {
     @GET
     @Produces("application/json")
     public String getSessionsMessage() throws IOException {
-        return new ObjectMapper().writeValueAsString(sh.getSessions());
+        return ConvertObject.devicesToJsonString(sh.getDevices());
     }
 }
