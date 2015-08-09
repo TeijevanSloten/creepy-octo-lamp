@@ -1,8 +1,9 @@
-package nl.mdtvs;
+package nl.mdtvs.client;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.websocket.ClientEndpoint;
@@ -13,15 +14,19 @@ import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import nl.mdtvs.modules.PropertiesRequest;
+
+import nl.mdtvs.command.CommandHandler;
+import nl.mdtvs.command.Message;
+import nl.mdtvs.modules.PropertiesCommand;
 import org.codehaus.jackson.map.ObjectMapper;
 
 @ClientEndpoint
 public class ActionEndpoint {
 
-    Session userSession = null;
-    private MessageHandler messageHandler;
+    private Session userSession = null;
     private URI endpointURI;
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private CommandHandler commandhandler = new CommandHandler();
 
     public ActionEndpoint(URI uri) {
         try {
@@ -36,7 +41,7 @@ public class ActionEndpoint {
     public void onOpen(Session userSession) throws IOException {
         System.out.println("opening websocket");
         this.userSession = userSession;
-        sendAction("REGISTER_DEVICE", PropertiesRequest.getJsonSystemProperties());
+        sendAction("REGISTER_DEVICE", PropertiesCommand.getJsonSystemProperties());
     }
 
     @OnClose
@@ -47,21 +52,23 @@ public class ActionEndpoint {
     }
 
     @OnMessage
-    public void onMessage(String message) {
-        if (this.messageHandler != null) {
-            this.messageHandler.handleMessage(message);
+    public void onMessage(String message) throws IOException {
+        Message response = commandhandler.execute(objectMapper.readValue(message, Message.class));
+        if (response != null) {
+            System.out.println(response.getActionMessage());
+            sendAction(response);
         }
     }
 
-    public void sendMessage(String message) {
-        this.userSession.getAsyncRemote().sendText(message);
+    public void sendAction(Message m) throws IOException {
+        this.userSession.getAsyncRemote().sendText(objectMapper.writeValueAsString(m));
     }
 
     public void sendAction(String actionName, String actionMessage) throws IOException {
-        HashMap<String, String> action = new HashMap();
+        Map<String, String> action = new HashMap<>();
         action.put("action", actionName);
         action.put("actionmessage", actionMessage);
-        this.userSession.getAsyncRemote().sendText(new ObjectMapper().writeValueAsString(action));
+        this.userSession.getAsyncRemote().sendText(objectMapper.writeValueAsString(action));
     }
 
     public void connect(URI uri) throws DeploymentException, IOException {
@@ -76,14 +83,5 @@ public class ActionEndpoint {
             Logger.getLogger(ActionEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             reconnect();
         }
-    }
-
-    public void addMessageHandler(MessageHandler msgHandler) {
-        this.messageHandler = msgHandler;
-    }
-
-    public interface MessageHandler {
-
-        void handleMessage(String message);
     }
 }

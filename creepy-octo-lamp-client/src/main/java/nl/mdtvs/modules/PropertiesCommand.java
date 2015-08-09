@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.codehaus.jackson.map.ObjectMapper;
 
-public class PropertiesRequest {
+public class PropertiesCommand {
 
     public static String getJsonSystemProperties() throws IOException {
         return new ObjectMapper().writeValueAsString(retrieveProperties());
