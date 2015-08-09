@@ -1,4 +1,4 @@
-package nl.ndts.rest;
+package nl.mdtvs.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

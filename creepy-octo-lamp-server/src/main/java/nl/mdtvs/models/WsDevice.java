@@ -1,4 +1,4 @@
-package nl.ndts.models;
+package nl.mdtvs.models;
 
 import java.util.HashMap;
 import java.util.Map;

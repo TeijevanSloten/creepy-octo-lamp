@@ -1,4 +1,4 @@
-package nl.ndts.rest;
+package nl.mdtvs.rest;
 
 import java.io.IOException;
 import javax.inject.Inject;
@@ -6,9 +6,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.xml.bind.JAXBException;
-import nl.ndts.models.WsAction;
-import nl.ndts.util.ConvertObject;
-import nl.ndts.websocket.SessionHandler;
+import nl.mdtvs.models.WsAction;
+import nl.mdtvs.util.ConvertObject;
+import nl.mdtvs.websocket.SessionHandler;
 
 @Path("/action")
 public class ActionBoundary {

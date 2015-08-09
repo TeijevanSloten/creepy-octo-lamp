@@ -1,10 +1,10 @@
-package nl.ndts.util;
+package nl.mdtvs.util;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
-import nl.ndts.models.WsAction;
+import nl.mdtvs.models.WsAction;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 

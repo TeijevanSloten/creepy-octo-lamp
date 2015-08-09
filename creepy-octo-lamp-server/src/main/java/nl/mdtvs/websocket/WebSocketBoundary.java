@@ -1,4 +1,4 @@
-package nl.ndts.websocket;
+package nl.mdtvs.websocket;
 
 import java.io.IOException;
 import java.util.logging.Level;
