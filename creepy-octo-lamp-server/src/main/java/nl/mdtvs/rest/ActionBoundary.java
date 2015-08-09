@@ -24,8 +24,8 @@ public class ActionBoundary {
         return "Message send";
     }
 
-    @Path("/sessions")
     @GET
+    @Path("/sessions")
     @Produces("application/json")
     public String getSessionsMessage() throws IOException {
         return ConvertObject.devicesToJsonString(sh.getDevices());

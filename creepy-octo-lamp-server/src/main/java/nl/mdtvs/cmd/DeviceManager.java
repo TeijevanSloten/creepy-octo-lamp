@@ -1,12 +1,13 @@
 package nl.mdtvs.cmd;
 
+import nl.mdtvs.models.WsDevice;
+import nl.mdtvs.util.ConvertObject;
+
+import javax.websocket.Session;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.websocket.Session;
-import javax.xml.bind.JAXBException;
-import nl.mdtvs.models.WsDevice;
-import nl.mdtvs.util.ConvertObject;
 
 public class DeviceManager {
 
@@ -30,8 +31,7 @@ public class DeviceManager {
     }
 
     public void registerDevice(String jsonSting, Session s) throws JAXBException, IOException {
-        WsDevice wsd = new WsDevice(s);
-        wsd.setProperties(ConvertObject.jsonStringToMap(jsonSting));
+        WsDevice wsd = new WsDevice(s, ConvertObject.jsonStringToMap(jsonSting));
         devices.put(s.getId(), wsd);
     }
 
