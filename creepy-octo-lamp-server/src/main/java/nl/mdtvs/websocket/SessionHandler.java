@@ -45,15 +45,11 @@ public class SessionHandler {
     }
 
     public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
-        Map<String, String> map = ConvertObject.jsonStringToMap(jsonString);
-        String action = map.get("action");
-        if (action != null || !"".equals(action)) {
-            try {
-                commandHandler.executeCommand(CmdEnum.valueOf(action), new Object[]{map.get("actionmessage"), session});
-            } catch (IllegalArgumentException | NullPointerException e){
-                System.out.println("Unkown message");
-            }
-        } else {
+        WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
+
+        try {
+            commandHandler.executeCommand(CmdEnum.valueOf(ws.actionName), new Object[]{ws.actionMessage, session});
+        } catch (IllegalArgumentException | NullPointerException e) {
             System.out.println("Unkown message");
         }
     }

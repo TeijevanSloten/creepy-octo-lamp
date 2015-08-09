@@ -1,24 +1,15 @@
 package nl.mdtvs.client;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.websocket.ClientEndpoint;
-import javax.websocket.CloseReason;
-import javax.websocket.ContainerProvider;
-import javax.websocket.DeploymentException;
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-
 import nl.mdtvs.command.CommandHandler;
 import nl.mdtvs.command.Message;
 import nl.mdtvs.modules.PropertiesCommand;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import javax.websocket.*;
+import java.io.IOException;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @ClientEndpoint
 public class ActionEndpoint {
@@ -41,7 +32,7 @@ public class ActionEndpoint {
     public void onOpen(Session userSession) throws IOException {
         System.out.println("opening websocket");
         this.userSession = userSession;
-        sendAction("REGISTER_DEVICE", PropertiesCommand.getJsonSystemProperties());
+        sendAction(new Message("REGISTER_DEVICE", PropertiesCommand.getJsonSystemProperties()));
     }
 
     @OnClose
@@ -62,13 +53,6 @@ public class ActionEndpoint {
 
     public void sendAction(Message m) throws IOException {
         this.userSession.getAsyncRemote().sendText(objectMapper.writeValueAsString(m));
-    }
-
-    public void sendAction(String actionName, String actionMessage) throws IOException {
-        Map<String, String> action = new HashMap<>();
-        action.put("action", actionName);
-        action.put("actionmessage", actionMessage);
-        this.userSession.getAsyncRemote().sendText(objectMapper.writeValueAsString(action));
     }
 
     public void connect(URI uri) throws DeploymentException, IOException {
