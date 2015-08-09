@@ -45,10 +45,9 @@ public class SessionHandler {
     }
 
     public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
-        WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
-
         try {
-            commandHandler.executeCommand(CmdEnum.valueOf(ws.actionName), new Object[]{ws.actionMessage, session});
+            WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
+            commandHandler.executeCommand(CmdEnum.valueOf(ws.getActionName()), new Object[]{ws.getActionMessage(), session});
         } catch (IllegalArgumentException | NullPointerException e) {
             System.out.println("Unkown message");
         }
