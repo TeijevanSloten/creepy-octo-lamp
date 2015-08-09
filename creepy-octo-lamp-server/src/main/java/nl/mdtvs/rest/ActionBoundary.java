@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 
@@ -22,6 +23,22 @@ public class ActionBoundary {
     public String getActionMessage() throws JAXBException, IOException {
         sh.sendAction(new WsAction("bla-Action", "bla"));
         return "Message send";
+    }
+
+    @GET
+    @Path("terminal")
+    @Produces("application/json")
+    public String sendTerminalMessage() throws JAXBException, IOException {
+        sh.sendAction(new WsAction("terminal", "ls -ap"));
+        return "TerminalMessage send";
+    }
+
+
+    @GET
+    @Path("terminalresponse")
+    @Produces("application/json")
+    public String getTerminalResponse(@QueryParam("sessionid") String sessionId) throws JAXBException, IOException {
+        return sh.getDevice(sessionId).getTerminalResponse();
     }
 
     @GET

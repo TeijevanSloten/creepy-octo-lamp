@@ -32,4 +32,12 @@ public class DeviceManager {
     public Map<String, WsDevice> getDevices() {
         return devices;
     }
+
+    public WsDevice getDevice(String sessionId) {
+        return devices.entrySet().stream().filter(wsDeviceEntry -> wsDeviceEntry.getKey().equals(sessionId)).findAny().get().getValue();
+    }
+
+    private void handleTerminalResponse(String sessionId, String terminalResponse){
+        getDevice(sessionId).setTerminalResponse(terminalResponse);
+    }
 }

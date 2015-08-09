@@ -24,7 +24,6 @@ public class SessionHandler {
     private CommandHandler commandHandler;
 
     public void addSession(Session session) {
-//        commandHandler.executeCommand(CmdEnum.REGISTER_DEVICE, new Object[]{session});
         System.out.println("add: " + session);
     }
 
@@ -45,6 +44,7 @@ public class SessionHandler {
 
     public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
         try {
+            System.out.println(jsonString);
             WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
             commandHandler.executeCommand(CmdEnum.valueOf(ws.getActionName()), new Object[]{ws.getActionMessage(), session});
         } catch (IllegalArgumentException | NullPointerException e) {
@@ -54,5 +54,9 @@ public class SessionHandler {
 
     public Map<String, WsDevice> getDevices() {
         return DeviceManager.getInstance().getDevices();
+    }
+
+    public WsDevice getDevice(String sessionId) {
+        return DeviceManager.getInstance().getDevice(sessionId);
     }
 }

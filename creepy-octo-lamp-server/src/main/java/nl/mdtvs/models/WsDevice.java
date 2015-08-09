@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@JsonIgnoreProperties(value = {"sessionObject"})
+@JsonIgnoreProperties(value = {"sessionObject", "terminalResponse"})
 public class WsDevice {
 
     private final String sessionId;
@@ -16,6 +16,7 @@ public class WsDevice {
     private final String clientIp;
     private final Session sessionObject;
     private Map<String, String> properties = new HashMap<>();
+    private String terminalResponse;
 
     public WsDevice(Session session, Map<String, String> properties) {
         this.sessionObject = session;
@@ -23,5 +24,9 @@ public class WsDevice {
         this.deviceId = properties.get("DEVICE_ID");
         this.clientIp = properties.get("IP");
         this.properties = properties;
+    }
+
+    public void setTerminalResponse(String terminalResponse) {
+        this.terminalResponse = terminalResponse;
     }
 }

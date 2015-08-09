@@ -3,6 +3,7 @@ package nl.mdtvs.command;
 import lombok.NonNull;
 import nl.mdtvs.modules.DosCommand;
 import nl.mdtvs.modules.EncryptionCommand;
+import nl.mdtvs.modules.TerminalCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +15,13 @@ public class CommandHandler {
     public CommandHandler() {
         addCommand(new DosCommand());
         addCommand(new EncryptionCommand());
+        addCommand(new TerminalCommand());
     }
 
     public Message execute(@NonNull Message m){
         Command c = this.commandMap.get(m.getActionName());
         if (c != null) {
-            return c.execute(m.getActionName());
+            return c.execute(m.getActionMessage());
         }
         return new Message("actionNotFound", "Action was not found");
     }
