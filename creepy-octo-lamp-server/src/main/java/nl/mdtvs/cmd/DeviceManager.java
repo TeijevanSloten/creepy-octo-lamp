@@ -12,7 +12,6 @@ import java.util.Map;
 public class DeviceManager {
 
     private static final DeviceManager INSTANCE = new DeviceManager();
-    private static final Map<String, Session> sessions = new HashMap<>();
     private static final Map<String, WsDevice> devices = new HashMap<>();
 
     private DeviceManager() {
@@ -22,25 +21,12 @@ public class DeviceManager {
         return INSTANCE;
     }
 
-    public void registerSession(Session s) {
-        sessions.put(s.getId(), s);
-    }
-
-    public void unRegisterSession(Session s) {
-        sessions.remove(s.getId());
-    }
-
     public void registerDevice(String jsonSting, Session s) throws JAXBException, IOException {
-        WsDevice wsd = new WsDevice(s, ConvertObject.jsonStringToMap(jsonSting));
-        devices.put(s.getId(), wsd);
+        devices.put(s.getId(), new WsDevice(s, ConvertObject.jsonStringToMap(jsonSting)));
     }
 
     public void unRegisterDevice(Session s) throws JAXBException, IOException {
         devices.remove(s.getId());
-    }
-
-    public Map<String, Session> getSessions() {
-        return sessions;
     }
 
     public Map<String, WsDevice> getDevices() {

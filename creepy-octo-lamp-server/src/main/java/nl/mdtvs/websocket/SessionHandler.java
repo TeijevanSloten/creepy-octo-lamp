@@ -24,24 +24,23 @@ public class SessionHandler {
     private CommandHandler commandHandler;
 
     public void addSession(Session session) {
-        commandHandler.executeCommand(CmdEnum.REGISTER_SESSION, new Object[]{session});
+//        commandHandler.executeCommand(CmdEnum.REGISTER_DEVICE, new Object[]{session});
         System.out.println("add: " + session);
     }
 
     public void removeSession(Session session) {
-        commandHandler.executeCommand(CmdEnum.UNREGISTER_SESSION, new Object[]{session});
         commandHandler.executeCommand(CmdEnum.UNREGISTER_DEVICE, new Object[]{session});
         System.out.println("remove: " + session);
     }
 
     public void sendAction(WsAction wsAction) throws JAXBException, IOException {
         String actionMessage = ConvertObject.wsActionToJson(wsAction);
-        DeviceManager.getInstance().getSessions().values().forEach(session -> session.getAsyncRemote().sendText(actionMessage));
+        DeviceManager.getInstance().getDevices().values().forEach(device -> device.getSessionObject().getAsyncRemote().sendText(actionMessage));
     }
 
     public void sendAction(WsAction wsAction, String sessionId) throws JAXBException, IOException {
         String actionMessage = ConvertObject.wsActionToJson(wsAction);
-        DeviceManager.getInstance().getSessions().get(sessionId).getAsyncRemote().sendText(actionMessage);
+        DeviceManager.getInstance().getDevices().get(sessionId).getSessionObject().getAsyncRemote().sendText(actionMessage);
     }
 
     public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
