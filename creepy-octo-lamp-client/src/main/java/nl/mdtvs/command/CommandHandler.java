@@ -1,12 +1,11 @@
 package nl.mdtvs.command;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.NonNull;
 import nl.mdtvs.modules.DosCommand;
 import nl.mdtvs.modules.EncryptionCommand;
 import nl.mdtvs.modules.TerminalCommand;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class CommandHandler {
 

@@ -1,18 +1,17 @@
 package nl.mdtvs.websocket;
 
+import java.io.IOException;
+import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.websocket.Session;
+import javax.xml.bind.JAXBException;
 import nl.mdtvs.cmd.DeviceManager;
 import nl.mdtvs.cmd.handler.CmdEnum;
 import nl.mdtvs.cmd.handler.CommandHandler;
 import nl.mdtvs.models.WsAction;
 import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ConvertObject;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.websocket.Session;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.util.Map;
 
 @ApplicationScoped
 public class SessionHandler {

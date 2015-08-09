@@ -1,13 +1,12 @@
 package nl.mdtvs.cmd;
 
-import nl.mdtvs.models.WsDevice;
-import nl.mdtvs.util.ConvertObject;
-
-import javax.websocket.Session;
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.websocket.Session;
+import javax.xml.bind.JAXBException;
+import nl.mdtvs.models.WsDevice;
+import nl.mdtvs.util.ConvertObject;
 
 public class DeviceManager {
 
@@ -37,7 +36,7 @@ public class DeviceManager {
         return devices.entrySet().stream().filter(wsDeviceEntry -> wsDeviceEntry.getKey().equals(sessionId)).findAny().get().getValue();
     }
 
-    private void handleTerminalResponse(String sessionId, String terminalResponse){
-        getDevice(sessionId).setTerminalResponse(terminalResponse);
+    public void handleTerminalResponse(String terminalResponse, Session s){
+        getDevice(s.getId()).setTerminalResponse(terminalResponse);
     }
 }

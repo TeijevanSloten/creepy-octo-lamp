@@ -1,16 +1,15 @@
 package nl.mdtvs.rest;
 
-import nl.mdtvs.models.WsAction;
-import nl.mdtvs.util.ConvertObject;
-import nl.mdtvs.websocket.SessionHandler;
-
+import java.io.IOException;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
-import java.io.IOException;
+import nl.mdtvs.models.WsAction;
+import nl.mdtvs.util.ConvertObject;
+import nl.mdtvs.websocket.SessionHandler;
 
 @Path("/action")
 public class ActionBoundary {
@@ -32,7 +31,6 @@ public class ActionBoundary {
         sh.sendAction(new WsAction("terminal", "ls -ap"));
         return "TerminalMessage send";
     }
-
 
     @GET
     @Path("terminalresponse")
