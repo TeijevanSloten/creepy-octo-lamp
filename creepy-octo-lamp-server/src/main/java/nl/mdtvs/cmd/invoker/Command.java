@@ -9,20 +9,19 @@ public class Command {
     private Method action;
 
     public Command(Object obj, String methodName, Class[] argTypes) {
-        receiver = obj;
         try {
+            receiver = obj;
             action = obj.getClass().getMethod(methodName, argTypes);
         } catch (NoSuchMethodException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
-    public Object execute(Object[] a) {
+    public void execute(Object[] arguments) {
         try {
-            return action.invoke(receiver, a);
+            action.invoke(receiver, arguments);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
-        return null;
     }
 }

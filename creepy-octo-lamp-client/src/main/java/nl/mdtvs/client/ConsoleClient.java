@@ -1,4 +1,4 @@
-package nl.mdtvs;
+package nl.mdtvs.client;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -7,8 +7,7 @@ public class ConsoleClient {
 
     public static void main(String[] args) throws InterruptedException, URISyntaxException {
         try {
-            ActionEndpoint clientEndPoint = new ActionEndpoint(new URI("ws://localhost:8080/creepy-octo-lamp-server/actions"));
-            clientEndPoint.addMessageHandler(System.out::println);
+            new ActionEndpoint(new URI("ws://localhost:8080/creepy-octo-lamp-server/actions"));
 
             keepCycling();
         } catch (URISyntaxException ex) {

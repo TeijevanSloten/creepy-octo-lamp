@@ -2,8 +2,7 @@ package nl.mdtvs.cmd.handler;
 
 public enum CmdEnum {
 
-    REGISTER_SESSION(0), UNREGISTER_SESSION(1),
-    REGISTER_DEVICE(2), UNREGISTER_DEVICE(3);
+    REGISTER_DEVICE(0), UNREGISTER_DEVICE(1);
 
     private final int hashKey;
 
@@ -14,5 +13,4 @@ public enum CmdEnum {
     public int getHashKey() {
         return hashKey;
     }
-
 }
