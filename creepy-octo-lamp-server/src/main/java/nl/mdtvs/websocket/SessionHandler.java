@@ -22,13 +22,25 @@ public class SessionHandler {
     @Inject
     private CommandHandler commandHandler;
 
+    private Session serverGui;
+
+    public Session getServerGui() {
+        return serverGui;
+    }
+
+    public void setServerGui(Session serverGui) {
+        this.serverGui = serverGui;
+    }
+    
     public void addSession(Session session) {
         System.out.println("add: " + session);
     }
 
     public void removeSession(Session session) {
         commandHandler.executeCommand(CmdEnum.UNREGISTER_DEVICE, new Object[]{session});
+        serverGui.getAsyncRemote().sendText("updateClients");
         System.out.println("remove: " + session);
+        
     }
 
     public void sendAction(WsAction wsAction) throws JAXBException, IOException {
@@ -46,6 +58,10 @@ public class SessionHandler {
             System.out.println(jsonString);
             WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
             commandHandler.executeCommand(CmdEnum.valueOf(ws.getActionName()), new Object[]{ws.getActionMessage(), session});
+            if(CmdEnum.valueOf(ws.getActionName()).getHashKey() == 0) {
+                serverGui.getAsyncRemote().sendText("updateClients");
+            }
+            
         } catch (IllegalArgumentException | NullPointerException e) {
             System.out.println("Unkown message");
         }
