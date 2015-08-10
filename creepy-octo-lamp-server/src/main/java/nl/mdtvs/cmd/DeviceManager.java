@@ -36,7 +36,7 @@ public class DeviceManager {
         return devices.entrySet().stream().filter(wsDeviceEntry -> wsDeviceEntry.getKey().equals(sessionId)).findAny().get().getValue();
     }
 
-    public void handleTerminalResponse(String terminalResponse, Session s){
+    public void handleTerminalResponse(String terminalResponse, Session s) {
         getDevice(s.getId()).setTerminalResponse(terminalResponse);
     }
 }

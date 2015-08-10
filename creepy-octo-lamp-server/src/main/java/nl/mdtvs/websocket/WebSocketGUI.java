@@ -12,16 +12,15 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import javax.xml.bind.JAXBException;
 
-
 @ServerEndpoint("/wsGUI")
 public class WebSocketGUI {
 
     @Inject
     private SessionHandler sessionHandler;
-        
+
     @OnOpen
     public void open(Session session) {
-        session.getAsyncRemote().sendText("oh hi!");
+        session.getAsyncRemote().sendText("updateClients");
         sessionHandler.setServerGui(session);
     }
 

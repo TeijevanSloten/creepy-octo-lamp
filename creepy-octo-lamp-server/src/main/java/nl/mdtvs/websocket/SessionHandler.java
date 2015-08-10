@@ -8,7 +8,8 @@ import javax.websocket.Session;
 import javax.xml.bind.JAXBException;
 import nl.mdtvs.cmd.DeviceManager;
 import nl.mdtvs.cmd.handler.CmdEnum;
-import nl.mdtvs.cmd.handler.CommandHandler;
+import nl.mdtvs.command.CommandHandler;
+import nl.mdtvs.command.Message;
 import nl.mdtvs.models.WsAction;
 import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ConvertObject;
@@ -31,16 +32,17 @@ public class SessionHandler {
     public void setServerGui(Session serverGui) {
         this.serverGui = serverGui;
     }
-    
+
     public void addSession(Session session) {
         System.out.println("add: " + session);
     }
 
     public void removeSession(Session session) {
-        commandHandler.executeCommand(CmdEnum.UNREGISTER_DEVICE, new Object[]{session});
-        serverGui.getAsyncRemote().sendText("updateClients");
-        System.out.println("remove: " + session);
-        
+        Message m = new Message("UNREGISTER_DEVICE", "");
+        if (commandHandler.isAvailableCommand(m.getActionName())) {
+            commandHandler.input(new Object[]{session, serverGui}).execute(m);
+            System.out.println("remove: " + session);
+        }
     }
 
     public void sendAction(WsAction wsAction) throws JAXBException, IOException {
@@ -55,13 +57,11 @@ public class SessionHandler {
 
     public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
         try {
-            System.out.println(jsonString);
             WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
-            commandHandler.executeCommand(CmdEnum.valueOf(ws.getActionName()), new Object[]{ws.getActionMessage(), session});
-            if(CmdEnum.valueOf(ws.getActionName()).getHashKey() == 0) {
-                serverGui.getAsyncRemote().sendText("updateClients");
+            Message m = new Message(ws.getActionName(), ws.getActionMessage());
+            if (commandHandler.isAvailableCommand(m.getActionName())) {
+                commandHandler.input(new Object[]{session, serverGui}).execute(m);
             }
-            
         } catch (IllegalArgumentException | NullPointerException e) {
             System.out.println("Unkown message");
         }
