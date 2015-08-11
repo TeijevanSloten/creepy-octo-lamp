@@ -1,6 +1,7 @@
 package nl.mdtvs.websocket;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,16 +24,24 @@ public class SessionHandler {
     @Inject
     private CommandHandler commandHandler;
 
-    private Session serverGui;
+    private HashMap<String, Session> serverGui = new HashMap();
 
-    public Session getServerGui() {
-        return serverGui;
+    public void addServerGui(Session serverGui) {
+        this.serverGui.put(serverGui.getId(), serverGui);
     }
 
-    public void setServerGui(Session serverGui) {
-        this.serverGui = serverGui;
+    public void removeServerGui(Session serverGui) {
+        this.serverGui.remove(serverGui.getId());
     }
-
+    
+    public Session getServerGui(Session serverGui) {
+        return this.serverGui.get(serverGui.getId());
+    }
+    
+    public HashMap<String, Session> getServerGui() {
+        return this.serverGui;
+    }
+    
     public void addSession(Session session) {
         System.out.println("add: " + session);
     }

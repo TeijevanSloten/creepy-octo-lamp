@@ -21,12 +21,12 @@ public class WebSocketGUI {
     @OnOpen
     public void open(Session session) {
         session.getAsyncRemote().sendText("updateClients");
-        sessionHandler.setServerGui(session);
+        sessionHandler.addServerGui(session);
     }
 
     @OnClose
     public void close(Session session) {
-        sessionHandler.setServerGui(null);
+        sessionHandler.removeServerGui(session);
     }
 
     @OnError
