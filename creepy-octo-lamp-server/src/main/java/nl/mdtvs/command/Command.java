@@ -1,10 +1,10 @@
 package nl.mdtvs.command;
 
+import javax.websocket.Session;
+
 public interface Command {
 
     String getCommandName();
 
-    Command input(Object[] args);
-
-    Message execute(String message);
+    Message execute(String message, Session session);
 }

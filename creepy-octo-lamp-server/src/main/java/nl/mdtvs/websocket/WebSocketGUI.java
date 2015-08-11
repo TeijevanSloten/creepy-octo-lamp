@@ -15,18 +15,21 @@ import javax.xml.bind.JAXBException;
 @ServerEndpoint("/wsGUI")
 public class WebSocketGUI {
 
-    @Inject
-    private SessionHandler sessionHandler;
+    private final GuiHandler guiHandler;
 
+    public WebSocketGUI() {
+        this.guiHandler = GuiHandler.getInstance();
+    }
+    
     @OnOpen
     public void open(Session session) {
         session.getAsyncRemote().sendText("updateClients");
-        sessionHandler.addServerGui(session);
+        guiHandler.addServerGui(session);
     }
 
     @OnClose
     public void close(Session session) {
-        sessionHandler.removeServerGui(session);
+        guiHandler.removeServerGui(session);
     }
 
     @OnError

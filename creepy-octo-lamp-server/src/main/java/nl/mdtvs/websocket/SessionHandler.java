@@ -1,14 +1,12 @@
 package nl.mdtvs.websocket;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.websocket.Session;
 import javax.xml.bind.JAXBException;
 import nl.mdtvs.cmd.DeviceManager;
-import nl.mdtvs.cmd.handler.CmdEnum;
 import nl.mdtvs.command.CommandHandler;
 import nl.mdtvs.command.Message;
 import nl.mdtvs.models.WsAction;
@@ -24,24 +22,6 @@ public class SessionHandler {
     @Inject
     private CommandHandler commandHandler;
 
-    private HashMap<String, Session> serverGui = new HashMap();
-
-    public void addServerGui(Session serverGui) {
-        this.serverGui.put(serverGui.getId(), serverGui);
-    }
-
-    public void removeServerGui(Session serverGui) {
-        this.serverGui.remove(serverGui.getId());
-    }
-    
-    public Session getServerGui(Session serverGui) {
-        return this.serverGui.get(serverGui.getId());
-    }
-    
-    public HashMap<String, Session> getServerGui() {
-        return this.serverGui;
-    }
-    
     public void addSession(Session session) {
         System.out.println("add: " + session);
     }
@@ -49,7 +29,7 @@ public class SessionHandler {
     public void removeSession(Session session) {
         Message m = new Message("UNREGISTER_DEVICE", "");
         if (commandHandler.isAvailableCommand(m.getActionName())) {
-            commandHandler.input(new Object[]{session, serverGui}).execute(m);
+            commandHandler.execute(m, session);
             System.out.println("remove: " + session);
         }
     }
@@ -69,7 +49,7 @@ public class SessionHandler {
             WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
             Message m = new Message(ws.getActionName(), ws.getActionMessage());
             if (commandHandler.isAvailableCommand(m.getActionName())) {
-                commandHandler.input(new Object[]{session, serverGui}).execute(m);
+                commandHandler.execute(m, session);
             }
         } catch (IllegalArgumentException | NullPointerException e) {
             System.out.println("Unkown message");

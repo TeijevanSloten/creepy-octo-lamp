@@ -2,6 +2,7 @@ package nl.mdtvs.command;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.websocket.Session;
 import lombok.NonNull;
 import nl.mdtvs.cmd.modules.RegisterDeviceCommand;
 import nl.mdtvs.cmd.modules.UnRegisterDeviceCommand;
@@ -15,20 +16,10 @@ public class CommandHandler {
         addCommand(new UnRegisterDeviceCommand());
     }
 
-    private Object[] args;
-
-    @NonNull
-    public CommandHandler input(Object[] args) {
-        this.args = args;
-        return this;
-    }
-
-    public Message execute(@NonNull Message m) {
+    public Message execute(@NonNull Message m, @NonNull Session session) {
         Command c = this.commandMap.get(m.getActionName());
-        if (c != null && args != null) {
-            return c.input(args).execute(m.getActionMessage());
-        } else if (c != null) {
-            return c.execute(m.getActionMessage());
+        if (c != null) {
+            return c.execute(m.getActionMessage(), session);
         }
         return new Message("actionNotFound", "Action was not found");
     }
