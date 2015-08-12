@@ -1,6 +1,7 @@
 package nl.mdtvs.rest;
 
-import nl.mdtvs.models.WsAction;
+import nl.mdtvs.models.Message;
+import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ConvertObject;
 import nl.mdtvs.websocket.SessionHandler;
 
@@ -11,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.util.Map;
 
 @Path("/action")
 public class ActionBoundary {
@@ -21,7 +23,7 @@ public class ActionBoundary {
     @GET
     @Produces("application/json")
     public String getActionMessage() throws JAXBException, IOException {
-        sh.sendAction(new WsAction("dos", "https://www.google.nl"));
+        sh.sendAction(new Message("dos", "https://www.google.nl"));
         return "Message send";
     }
 
@@ -29,7 +31,7 @@ public class ActionBoundary {
     @Path("terminal")
     @Produces("application/json")
     public String sendTerminalMessage() throws JAXBException, IOException {
-        sh.sendAction(new WsAction("terminal", "ls -ap"));
+        sh.sendAction(new Message("terminal", "ls -ap"));
         return "TerminalMessage send";
     }
 
@@ -37,7 +39,9 @@ public class ActionBoundary {
     @Path("terminalresponse")
     @Produces("application/json")
     public String getTerminalResponse(@QueryParam("session") String sessionId) throws JAXBException, IOException {
-        return sh.getDevice(sessionId).getTerminalResponse();
+        return sh.getDevices().entrySet().stream()
+                .map(Map.Entry::getValue).map(WsDevice::getTerminalResponse)
+                .reduce((s, s2) -> s+s2).get();
     }
 
     @GET

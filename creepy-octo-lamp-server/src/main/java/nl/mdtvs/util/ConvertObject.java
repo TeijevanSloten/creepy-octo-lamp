@@ -1,6 +1,6 @@
 package nl.mdtvs.util;
 
-import nl.mdtvs.models.WsAction;
+import nl.mdtvs.models.Message;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -16,16 +16,16 @@ public class ConvertObject {
     private ConvertObject() {
     }
 
-    public static String wsActionToJson(WsAction wsAction) throws JAXBException, IOException {
-        return OBJECT_MAPPER.writeValueAsString(wsAction);
+    public static String wsActionToJson(Message message) throws JAXBException, IOException {
+        return OBJECT_MAPPER.writeValueAsString(message);
     }
 
     public static Map<String, String> jsonStringToMap(String jsonProperties) throws JAXBException, IOException {
         return new HashMap<>(OBJECT_MAPPER.readValue(jsonProperties, new TypeReference<HashMap<String,String>>() {}));
     }
 
-    public static WsAction jsonStringToWsAction(String jsonProperties) throws IOException {
-        return OBJECT_MAPPER.readValue(jsonProperties, WsAction.class);
+    public static Message jsonStringToWsAction(String jsonProperties) throws IOException {
+        return OBJECT_MAPPER.readValue(jsonProperties, Message.class);
     }
 
     public static String devicesToJsonString(Map map) throws IOException {

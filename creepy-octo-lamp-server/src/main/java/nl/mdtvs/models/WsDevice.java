@@ -12,15 +12,19 @@ import java.util.Map;
 public class WsDevice {
 
     private final String sessionId;
-    private final String deviceId;
-    private final String clientIp;
     private final Session sessionObject;
     private Map<String, String> properties = new HashMap<>();
+    private String deviceId;
+    private String clientIp;
+
     private String terminalResponse;
 
-    public WsDevice(Session session, Map<String, String> properties) {
-        this.sessionObject = session;
+    public WsDevice(Session session) {
         this.sessionId = session.getId();
+        this.sessionObject = session;
+    }
+
+    public void setProperties(Map<String, String> properties){
         this.deviceId = properties.get("DEVICE_ID");
         this.clientIp = properties.get("IP");
         this.properties = properties;
@@ -28,5 +32,9 @@ public class WsDevice {
 
     public void setTerminalResponse(String terminalResponse) {
         this.terminalResponse = terminalResponse;
+    }
+
+    public void sendText(String message){
+        sessionObject.getAsyncRemote().sendText(message);
     }
 }

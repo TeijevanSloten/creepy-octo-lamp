@@ -1,9 +1,8 @@
 package nl.mdtvs.websocket;
 
-import nl.mdtvs.cmd.DeviceManager;
-import nl.mdtvs.cmd.handler.CmdEnum;
-import nl.mdtvs.cmd.handler.CommandHandler;
-import nl.mdtvs.models.WsAction;
+import nl.mdtvs.command.handler.CommandHandler;
+import nl.mdtvs.models.DeviceManager;
+import nl.mdtvs.models.Message;
 import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ConvertObject;
 
@@ -24,56 +23,40 @@ public class SessionHandler {
     private CommandHandler commandHandler;
 
     private Session serverGui;
-
-    public Session getServerGui() {
-        return serverGui;
-    }
-
     public void setServerGui(Session serverGui) {
         this.serverGui = serverGui;
     }
-    
-    public void addSession(Session session) {
-        System.out.println("add: " + session);
+    private DeviceManager dm = DeviceManager.getInstance();
+
+    public void addSession(Session session) throws JAXBException, IOException {
+        dm.registerDevice(session);
     }
 
-    public void removeSession(Session session) {
-        commandHandler.executeCommand(CmdEnum.UNREGISTER_DEVICE, new Object[]{session});
-        serverGui.getAsyncRemote().sendText("updateClients");
-        System.out.println("remove: " + session);
-        
+    public void removeSession(Session session) throws IOException {
+        dm.unRegisterDevice(session);
+//        serverGui.getAsyncRemote().sendText("updateClients");
     }
 
-    public void sendAction(WsAction wsAction, String sessionId) throws JAXBException, IOException {
-        String actionMessage = ConvertObject.wsActionToJson(wsAction);
-        DeviceManager.getInstance().getDevice(sessionId).getSessionObject().getAsyncRemote().sendText(actionMessage);
+    public void sendAction(Message message, String sessionId) throws JAXBException, IOException {
+        String actionMessage = ConvertObject.wsActionToJson(message);
+        DeviceManager.getInstance().getDevice(sessionId).sendText(actionMessage);
     }
 
-    public void sendAction(WsAction wsAction) throws JAXBException, IOException {
-        String actionMessage = ConvertObject.wsActionToJson(wsAction);
+    public void sendAction(Message message) throws JAXBException, IOException {
+        String actionMessage = ConvertObject.wsActionToJson(message);
+        System.out.println("Send: " + actionMessage);
         DeviceManager.getInstance().getDevices().values()
-                .forEach(device -> device.getSessionObject().getAsyncRemote().sendText(actionMessage));
+                .forEach(device -> device.sendText(actionMessage));
     }
 
     public void handleMessage(String jsonMessage, Session session) throws JAXBException, IOException {
-        try {
-            System.out.println(jsonMessage);
-            WsAction ws = ConvertObject.jsonStringToWsAction(jsonMessage);
-            commandHandler.executeCommand(CmdEnum.valueOf(ws.getAction()), new Object[]{ws.getMessage(), session});
-            if(CmdEnum.valueOf(ws.getAction()).getHashKey() == 0) {
-                serverGui.getAsyncRemote().sendText("updateClients");
-            }
-            
-        } catch (IllegalArgumentException | NullPointerException e) {
-            System.out.println("Unkown message");
-        }
+        System.out.println("Received: " + jsonMessage);
+        Message message = ConvertObject.jsonStringToWsAction(jsonMessage);
+        commandHandler.execute(message, dm.getDevice(session.getId()));
+//        serverGui.getAsyncRemote().sendText("updateClients");
     }
 
     public Map<String, WsDevice> getDevices() {
         return DeviceManager.getInstance().getDevices();
-    }
-
-    public WsDevice getDevice(String sessionId) {
-        return DeviceManager.getInstance().getDevice(sessionId);
     }
 }

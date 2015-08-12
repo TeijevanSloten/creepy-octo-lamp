@@ -44,7 +44,7 @@ public class ActionEndpoint {
 
     @OnMessage
     public void onMessage(String message) throws IOException {
-        System.out.println(message);
+        System.out.println("Received: " + message);
         Message response = commandhandler.execute(objectMapper.readValue(message, Message.class));
         if (response != null) {
             sendAction(response);
@@ -52,7 +52,7 @@ public class ActionEndpoint {
     }
 
     public void sendAction(Message m) throws IOException {
-        System.out.println(objectMapper.writeValueAsString(m));
+        System.out.println("Send: " + objectMapper.writeValueAsString(m));
         this.userSession.getAsyncRemote().sendText(objectMapper.writeValueAsString(m));
     }
 

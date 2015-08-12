@@ -1,12 +1,10 @@
-package nl.mdtvs.cmd;
+package nl.mdtvs.models;
 
+import javax.websocket.Session;
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.websocket.Session;
-import javax.xml.bind.JAXBException;
-import nl.mdtvs.models.WsDevice;
-import nl.mdtvs.util.ConvertObject;
 
 public class DeviceManager {
 
@@ -20,12 +18,14 @@ public class DeviceManager {
         return INSTANCE;
     }
 
-    public void registerDevice(String jsonSting, Session s) throws JAXBException, IOException {
-        devices.put(s.getId(), new WsDevice(s, ConvertObject.jsonStringToMap(jsonSting)));
+    public void registerDevice(Session s) throws JAXBException, IOException {
+        devices.put(s.getId(), new WsDevice(s));
+        System.out.println("registered: " + s.getId());
     }
 
-    public void unRegisterDevice(Session s) throws JAXBException, IOException {
+    public void unRegisterDevice(Session s) throws IOException {
         devices.remove(s.getId());
+        System.out.println("removed: " + s.getId());
     }
 
     public Map<String, WsDevice> getDevices() {
@@ -34,9 +34,5 @@ public class DeviceManager {
 
     public WsDevice getDevice(String sessionId) {
         return devices.entrySet().stream().filter(wsDeviceEntry -> wsDeviceEntry.getKey().equals(sessionId)).findAny().get().getValue();
-    }
-
-    public void handleTerminalResponse(String terminalResponse, Session s){
-        getDevice(s.getId()).setTerminalResponse(terminalResponse);
     }
 }
