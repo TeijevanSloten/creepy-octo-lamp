@@ -44,20 +44,21 @@ public class SessionHandler {
         
     }
 
-    public void sendAction(WsAction wsAction) throws JAXBException, IOException {
-        String actionMessage = ConvertObject.wsActionToJson(wsAction);
-        DeviceManager.getInstance().getDevices().values().forEach(device -> device.getSessionObject().getAsyncRemote().sendText(actionMessage));
-    }
-
     public void sendAction(WsAction wsAction, String sessionId) throws JAXBException, IOException {
         String actionMessage = ConvertObject.wsActionToJson(wsAction);
-        DeviceManager.getInstance().getDevices().get(sessionId).getSessionObject().getAsyncRemote().sendText(actionMessage);
+        DeviceManager.getInstance().getDevice(sessionId).getSessionObject().getAsyncRemote().sendText(actionMessage);
     }
 
-    public void handleMessage(String jsonString, Session session) throws JAXBException, IOException {
+    public void sendAction(WsAction wsAction) throws JAXBException, IOException {
+        String actionMessage = ConvertObject.wsActionToJson(wsAction);
+        DeviceManager.getInstance().getDevices().values()
+                .forEach(device -> device.getSessionObject().getAsyncRemote().sendText(actionMessage));
+    }
+
+    public void handleMessage(String jsonMessage, Session session) throws JAXBException, IOException {
         try {
-            System.out.println(jsonString);
-            WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
+            System.out.println(jsonMessage);
+            WsAction ws = ConvertObject.jsonStringToWsAction(jsonMessage);
             commandHandler.executeCommand(CmdEnum.valueOf(ws.getAction()), new Object[]{ws.getMessage(), session});
             if(CmdEnum.valueOf(ws.getAction()).getHashKey() == 0) {
                 serverGui.getAsyncRemote().sendText("updateClients");
