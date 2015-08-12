@@ -17,8 +17,7 @@ public class ConsoleClient {
 
     private static void keepCycling() throws InterruptedException {
         while (true) {
-            Thread.sleep(2000);
-            System.out.println("cycle");
+            Thread.sleep(500);
         }
     }
 }

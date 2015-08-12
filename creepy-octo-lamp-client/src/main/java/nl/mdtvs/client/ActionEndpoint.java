@@ -46,12 +46,12 @@ public class ActionEndpoint {
     public void onMessage(String message) throws IOException {
         Message response = commandhandler.execute(objectMapper.readValue(message, Message.class));
         if (response != null) {
-            System.out.println(response.getActionMessage());
             sendAction(response);
         }
     }
 
     public void sendAction(Message m) throws IOException {
+        System.out.println(objectMapper.writeValueAsString(m));
         this.userSession.getAsyncRemote().sendText(objectMapper.writeValueAsString(m));
     }
 

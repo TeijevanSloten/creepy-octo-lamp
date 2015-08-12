@@ -7,11 +7,11 @@ public class EncryptionCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "bla-Action2";
+        return "encryption";
     }
 
     @Override
     public Message execute(String message) {
-        return new Message("encryption", "successful");
+        return new Message("exception", "Service not Implemented");
     }
 }

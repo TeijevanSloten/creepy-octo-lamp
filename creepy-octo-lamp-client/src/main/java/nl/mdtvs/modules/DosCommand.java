@@ -7,11 +7,11 @@ public class DosCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "bla-Action";
+        return "dos";
     }
 
     @Override
     public Message execute(String message) {
-        return new Message("dos", "successful");
+        return new Message("exception", "Service not Implemented");
     }
 }
