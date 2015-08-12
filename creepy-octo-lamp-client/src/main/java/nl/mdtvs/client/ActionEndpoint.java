@@ -44,6 +44,7 @@ public class ActionEndpoint {
 
     @OnMessage
     public void onMessage(String message) throws IOException {
+        System.out.println(message);
         Message response = commandhandler.execute(objectMapper.readValue(message, Message.class));
         if (response != null) {
             sendAction(response);

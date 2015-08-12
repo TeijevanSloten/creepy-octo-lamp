@@ -1,15 +1,16 @@
 package nl.mdtvs.rest;
 
-import java.io.IOException;
+import nl.mdtvs.models.WsAction;
+import nl.mdtvs.util.ConvertObject;
+import nl.mdtvs.websocket.SessionHandler;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
-import nl.mdtvs.models.WsAction;
-import nl.mdtvs.util.ConvertObject;
-import nl.mdtvs.websocket.SessionHandler;
+import java.io.IOException;
 
 @Path("/action")
 public class ActionBoundary {
@@ -20,7 +21,7 @@ public class ActionBoundary {
     @GET
     @Produces("application/json")
     public String getActionMessage() throws JAXBException, IOException {
-        sh.sendAction(new WsAction("bla-Action", "bla"));
+        sh.sendAction(new WsAction("dos", "https://www.google.nl"));
         return "Message send";
     }
 
@@ -35,7 +36,7 @@ public class ActionBoundary {
     @GET
     @Path("terminalresponse")
     @Produces("application/json")
-    public String getTerminalResponse(@QueryParam("sessionid") String sessionId) throws JAXBException, IOException {
+    public String getTerminalResponse(@QueryParam("session") String sessionId) throws JAXBException, IOException {
         return sh.getDevice(sessionId).getTerminalResponse();
     }
 
