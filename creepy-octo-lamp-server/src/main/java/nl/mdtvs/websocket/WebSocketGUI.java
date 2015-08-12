@@ -12,18 +12,21 @@ import java.util.logging.Logger;
 @ServerEndpoint("/wsGUI")
 public class WebSocketGUI {
 
-    @Inject
-    private SessionHandler sessionHandler;
+    private final GuiHandler guiHandler;
+
+    public WebSocketGUI() {
+        this.guiHandler = GuiHandler.getInstance();
+    }
 
     @OnOpen
     public void open(Session session) {
-//        session.getAsyncRemote().sendText("oh hi!");
-//        sessionHandler.setServerGui(session);
+        guiHandler.addServerGui(session);
+        session.getAsyncRemote().sendText("updateClients");
     }
 
     @OnClose
     public void close(Session session) {
-        sessionHandler.setServerGui(null);
+        guiHandler.removeServerGui(session);
     }
 
     @OnError

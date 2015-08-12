@@ -22,11 +22,7 @@ public class SessionHandler {
     @Inject
     private CommandHandler commandHandler;
 
-    private Session serverGui;
-    public void setServerGui(Session serverGui) {
-        this.serverGui = serverGui;
-    }
-    private DeviceManager dm = DeviceManager.getInstance();
+    private final DeviceManager dm = DeviceManager.getInstance();
 
     public void addSession(Session session) throws JAXBException, IOException {
         dm.registerDevice(session);
@@ -34,7 +30,6 @@ public class SessionHandler {
 
     public void removeSession(Session session) throws IOException {
         dm.unRegisterDevice(session);
-//        serverGui.getAsyncRemote().sendText("updateClients");
     }
 
     public void sendAction(Message message, String sessionId) throws JAXBException, IOException {
