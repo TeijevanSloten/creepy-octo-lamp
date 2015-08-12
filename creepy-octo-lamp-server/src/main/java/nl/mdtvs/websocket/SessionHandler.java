@@ -1,17 +1,18 @@
 package nl.mdtvs.websocket;
 
-import java.io.IOException;
-import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.websocket.Session;
-import javax.xml.bind.JAXBException;
 import nl.mdtvs.cmd.DeviceManager;
 import nl.mdtvs.cmd.handler.CmdEnum;
 import nl.mdtvs.cmd.handler.CommandHandler;
 import nl.mdtvs.models.WsAction;
 import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ConvertObject;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.websocket.Session;
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.Map;
 
 @ApplicationScoped
 public class SessionHandler {
@@ -57,8 +58,8 @@ public class SessionHandler {
         try {
             System.out.println(jsonString);
             WsAction ws = ConvertObject.jsonStringToWsAction(jsonString);
-            commandHandler.executeCommand(CmdEnum.valueOf(ws.getActionName()), new Object[]{ws.getActionMessage(), session});
-            if(CmdEnum.valueOf(ws.getActionName()).getHashKey() == 0) {
+            commandHandler.executeCommand(CmdEnum.valueOf(ws.getAction()), new Object[]{ws.getMessage(), session});
+            if(CmdEnum.valueOf(ws.getAction()).getHashKey() == 0) {
                 serverGui.getAsyncRemote().sendText("updateClients");
             }
             

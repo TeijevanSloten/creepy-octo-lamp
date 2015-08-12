@@ -9,6 +9,6 @@ import lombok.NonNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
-    @NonNull private String actionName;
-    @NonNull private String actionMessage;
+    @NonNull private String action;
+    @NonNull private String message;
 }

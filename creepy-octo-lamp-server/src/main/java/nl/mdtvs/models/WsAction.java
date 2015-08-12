@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WsAction {
-    private String actionName;
-    private String actionMessage;
+    private String action;
+    private String message;
 }

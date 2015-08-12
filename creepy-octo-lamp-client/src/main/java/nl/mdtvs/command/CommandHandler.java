@@ -20,9 +20,9 @@ public class CommandHandler {
     }
 
     public Message execute(@NonNull Message m){
-        Command c = this.commandMap.get(m.getActionName());
+        Command c = this.commandMap.get(m.getAction());
         if (c != null) {
-            return c.execute(m.getActionMessage());
+            return c.execute(m.getMessage());
         }
         return new Message("exception", ACTION_WAS_NOT_FOUND);
     }
