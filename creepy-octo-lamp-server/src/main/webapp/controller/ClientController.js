@@ -1,5 +1,4 @@
-angular.module('base', [])
-        .controller('ClientController', function ($scope, $http) {
+app.registerCtrl('ClientController', function ($scope, $http) {
             this.selecterProps = null;
     
             $scope.connect = function () {

@@ -1,0 +1,31 @@
+<div class="container" ng-controller="ClientController as cliCtrl">
+    <table class="col-md-8 table table-striped" ng-init="clients = cliCtrl.getClients()">
+        <thead>
+            <tr>
+                <td>session</td>
+                <td>IP</td>
+                <td>User</td>
+                <td>OS</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat-start="client in clients">
+                <td>{{client.sessionId}}</td>
+                <td>{{client.clientIp}}</td>
+                <td>{{client.properties["user.name"]}}</td>
+                <td>{{client.properties["os.name"]}}</td>
+                <td> <button ng-click="cliCtrl.openProperties($index)">properties</button></td>
+            </tr>
+            <tr ng-repeat-end ng-show="cliCtrl.showProperties($index)">
+                <td colspan="5">
+                    <div style="word-break: break-all;max-height: 150px;overflow: auto;">
+                        <p ng-repeat="(key,value) in client.properties">
+                            {{key}}: {{value}}
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
