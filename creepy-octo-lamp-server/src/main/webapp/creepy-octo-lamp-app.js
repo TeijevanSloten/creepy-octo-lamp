@@ -23,6 +23,10 @@ app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $
                     templateUrl: "view/clientList.html",
                     resolve: requireCtrl("ClientController")
                 })
+                .when("/sendMessage", {
+                    templateUrl: "view/message.html",
+                    resolve: requireCtrl("MessageController")
+                })
                 .otherwise({
                     redirectTo: "/"
                 });

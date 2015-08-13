@@ -13,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.Map;
+import javax.ws.rs.core.MediaType;
 
 @Path("/action")
 public class ActionBoundary {
@@ -21,7 +22,6 @@ public class ActionBoundary {
     private SessionHandler sh;
 
     @GET
-    @Produces("application/json")
     public String getActionMessage() throws JAXBException, IOException {
         sh.sendAction(new Message("dos", "https://www.google.nl"));
         return "Message send";
@@ -29,7 +29,7 @@ public class ActionBoundary {
 
     @GET
     @Path("terminal")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String sendTerminalMessage() throws JAXBException, IOException {
         sh.sendAction(new Message("terminal", "ls -ap"));
         return "TerminalMessage send";
@@ -37,16 +37,16 @@ public class ActionBoundary {
 
     @GET
     @Path("terminalresponse")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String getTerminalResponse(@QueryParam("session") String sessionId) throws JAXBException, IOException {
         return sh.getDevices().entrySet().stream()
                 .map(Map.Entry::getValue).map(WsDevice::getTerminalResponse)
-                .reduce((s, s2) -> s+s2).get();
+                .reduce((s, s2) -> s + s2).get();
     }
 
     @GET
     @Path("/sessions")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public String getSessionsMessage() throws IOException {
         return ConvertObject.devicesToJsonString(sh.getDevices());
     }
