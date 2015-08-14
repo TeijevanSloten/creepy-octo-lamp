@@ -18,7 +18,7 @@ app.registerCtrl('ClientController', function ($scope, $http, $timeout) {
 
     self.poll = function () {
         $timeout(function () {
-            self.getClients()
+            self.getClients();
             self.poll();
         }, 500);
     };
