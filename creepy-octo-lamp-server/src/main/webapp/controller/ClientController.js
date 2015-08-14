@@ -20,7 +20,7 @@ app.registerCtrl('ClientController', function ($scope, $http) {
             };
             
             $scope.getClients = function () {
-                $http.get("http://localhost:8080/creepy-octo-lamp-server/resources/action/devices")
+                $http.get("resources/action/devices")
                         .success(function (response) {
                             $scope.clients = response;
                             console.log($scope.clients);
