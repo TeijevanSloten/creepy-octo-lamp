@@ -1,9 +1,10 @@
-app.registerCtrl('ClientController', function ($scope, $http) {
+app.registerCtrl('ClientController', function ($scope, $http, $timeout) {
     var self = this;
 
     self.init = function () {
         self.selecterProps = null;
         self.getClients();
+        self.poll();
     };
 
 
@@ -15,6 +16,12 @@ app.registerCtrl('ClientController', function ($scope, $http) {
             });
     };
 
+    self.poll = function () {
+        $timeout(function () {
+            self.getClients()
+            self.poll();
+        }, 500);
+    };
 
     self.showProperties = function (index) {
         if (self.selecterProps === null)
