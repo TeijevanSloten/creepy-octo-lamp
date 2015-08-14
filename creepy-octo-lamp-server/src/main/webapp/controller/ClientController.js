@@ -8,6 +8,7 @@ app.registerCtrl('ClientController', function ($scope, $http) {
             this.websock = $scope.connect();
     
             this.websock.onclose = function(event){
+                console.log(event);
                 $scope.connect();
             };
             
@@ -19,7 +20,7 @@ app.registerCtrl('ClientController', function ($scope, $http) {
             };
             
             $scope.getClients = function () {
-                $http.get("http://localhost:8080/creepy-octo-lamp-server/resources/action/sessions")
+                $http.get("http://localhost:8080/creepy-octo-lamp-server/resources/action/devices")
                         .success(function (response) {
                             $scope.clients = response;
                             console.log($scope.clients);
