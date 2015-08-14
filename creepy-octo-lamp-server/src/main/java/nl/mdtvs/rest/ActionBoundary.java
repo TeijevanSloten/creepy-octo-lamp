@@ -1,19 +1,18 @@
 package nl.mdtvs.rest;
 
-import nl.mdtvs.models.Message;
-import nl.mdtvs.models.WsDevice;
-import nl.mdtvs.util.ConvertObject;
-import nl.mdtvs.websocket.SessionHandler;
-
+import java.io.IOException;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.util.Map;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBException;
+import nl.mdtvs.models.Message;
+import nl.mdtvs.models.WsDevice;
+import nl.mdtvs.util.ConvertObject;
+import nl.mdtvs.websocket.SessionHandler;
 
 @Path("/action")
 public class ActionBoundary {
@@ -22,7 +21,7 @@ public class ActionBoundary {
     private SessionHandler sh;
 
     @GET
-    public String getActionMessage() throws JAXBException, IOException {
+    public String sendActionMessage() throws JAXBException, IOException {
         sh.sendAction(new Message("dos", "https://www.google.nl"));
         return "Message send";
     }

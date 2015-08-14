@@ -1,6 +1,6 @@
 app.registerCtrl('ClientController', function ($scope, $http) {
             this.selecterProps = null;
-    
+                
             $scope.connect = function () {
                 return new WebSocket("ws://localhost:8080/creepy-octo-lamp-server/wsGUI");
             };    
