@@ -1,12 +1,13 @@
 app.registerCtrl('ClientController', function ($scope, $http) {
+    var self = this;
 
-    this.initialize = function(){
-        this.selecterProps = null;
-        this.getClients();
+    self.init = function () {
+        self.selecterProps = null;
+        self.getClients();
     };
 
 
-    this.getClients = function () {
+    self.getClients = function () {
         $http.get("resources/action/devices")
             .success(function (response) {
                 $scope.clients = response;
@@ -15,20 +16,20 @@ app.registerCtrl('ClientController', function ($scope, $http) {
     };
 
 
-    this.showProperties = function (index) {
-        if (this.selecterProps === null)
+    self.showProperties = function (index) {
+        if (self.selecterProps === null)
             return false;
-        return this.selecterProps === index;
+        return self.selecterProps === index;
     };
 
-    this.openProperties = function (index) {
+    self.openProperties = function (index) {
         console.log(index);
-        if (this.showProperties(index) === true) {
-            this.selecterProps = null;
+        if (self.showProperties(index) === true) {
+            self.selecterProps = null;
         } else {
-            this.selecterProps = index;
+            self.selecterProps = index;
         }
     };
 
-    this.initialize();
+    self.init();
 });
