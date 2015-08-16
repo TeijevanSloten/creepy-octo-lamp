@@ -1,16 +1,48 @@
 <div ng-controller="DeviceController as ctrl">
     <div class="container">
         <div class="row">
-            <div class="col-md-11">
-                <div class="row">
-                    <input type="text" class="form-control" ng-model="ctrl.terminalRequest" placeholder="input"/>
-                </div>
+            <div class="col-md-12">
+                <h2>Device: {{ctrl.device.properties["user.name"]}}</h2>
             </div>
-            <button class="btn btn-default col-md-1" ng-click="ctrl.sendCommand()">Send</button>
+            <div class="col-md-4">
+                <dt>Session</dt>
+                <dd>{{ctrl.device.sessionId}}</dd>
+                <dt>IP</dt>
+                <dd>{{ctrl.device.clientIp}}</dd>
+            </div>
+            <div class="col-md-4">
+                <dt>Username</dt>
+                <dd>{{ctrl.device.properties["user.name"]}}</dd>
+                <dt>OsName</dt>
+                <dd>{{ctrl.device.properties["os.name"]}}</dd>
+            </div>
+            <div class="col-md-4">
+                <dt>User dir</dt>
+                <dd>{{ctrl.device.properties["user.dir"]}}</dd>
+            </div>
         </div>
-        <div class="row" style="margin-top: 10px;">
-            <textarea class="form-control col-md-12" style="height: 500px;"
-                      placeholder="output">{{ctrl.terminalResponse}}</textarea>
-        </div>
+
+        <tabset justified="true" style="margin-top: 10px;">
+            <tab heading="Properties">
+                <div ng-repeat="(key, value) in ctrl.device.properties">
+                    <dl class="dl-horizontal">
+                        <dt>{{key}}</dt>
+                        <dd>{{value}}</dd>
+                    </dl>
+                </div>
+            </tab>
+            <tab heading="Terminal">
+                <div class="col-md-11">
+                    <div class="row">
+                        <input type="text" class="form-control" ng-model="ctrl.terminalRequest" placeholder="Command"/>
+                    </div>
+                </div>
+                <button class="btn btn-default col-md-1" ng-click="ctrl.sendCommand()">Send</button>
+                <textarea class="form-control col-md-12" style="height: 500px;" placeholder="output">{{ctrl.terminalResponse}}</textarea>
+
+            </tab>
+            <tab heading="Dos"></tab>
+            <tab heading="Encrypt"></tab>
+        </tabset>
     </div>
 </div>

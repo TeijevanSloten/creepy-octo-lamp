@@ -1,13 +1,13 @@
-var app = angular.module("creepyoctolamp", ["ngRoute"]);
+var app = angular.module('creepyoctolamp', ['ngRoute', 'ui.bootstrap']);
 
-app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $controllerProvider) {
+app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $controllerProvider) {
 
     app.registerCtrl = $controllerProvider.register;
 
     function requireCtrl(name) {
         return ['$q', '$rootScope', function ($q, $rootScope) {
             var deferred = $q.defer();
-            $.getScript("controller/" + name + ".js").success(function () {
+            $.getScript('controller/' + name + '.js').success(function () {
                 $rootScope.$apply(function () {
                     deferred.resolve();
                 });
@@ -16,22 +16,22 @@ app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $
         }];
     }
 
-    $routeProvider.when("/", {
-        templateUrl: "view/app.html"
+    $routeProvider.when('/', {
+        templateUrl: 'view/app.html'
     })
-        .when("/clients", {
-            templateUrl: "view/deviceList.html",
-            resolve: requireCtrl("DeviceListController")
+        .when('/clients', {
+            templateUrl: 'view/deviceList.html',
+            resolve: requireCtrl('DeviceListController')
         })
-        .when("/device/:session", {
-            templateUrl: "view/device.html",
-            resolve: requireCtrl("DeviceController")
-        })        
-        .when("/sendMessage", {
-            templateUrl: "view/message.html",
-            resolve: requireCtrl("MessageController")
+        .when('/device/:session', {
+            templateUrl: 'view/device.html',
+            resolve: requireCtrl('DeviceController')
+        })
+        .when('/sendMessage', {
+            templateUrl: 'view/message.html',
+            resolve: requireCtrl('MessageController')
         })
         .otherwise({
-            redirectTo: "/"
+            redirectTo: '/'
         });
 }]);

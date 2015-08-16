@@ -35,7 +35,7 @@ app.registerCtrl('DeviceController', function ($routeParams, $http, $timeout) {
         $timeout(function () {
             self.getTerminalResponse();
             self.poll();
-        }, 200);
+        }, 5000);
     };
 
     self.init();
