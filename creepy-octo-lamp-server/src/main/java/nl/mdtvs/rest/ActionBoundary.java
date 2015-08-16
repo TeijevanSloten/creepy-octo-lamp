@@ -22,9 +22,9 @@ public class ActionBoundary {
     }
 
     @POST
-    @Path("/terminal/{session}/{message}")
-    public void sendTerminalMessage(@PathParam("session") String session, @PathParam("message") String message) throws JAXBException, IOException {
-        sh.sendAction(session, new Message("terminal", message));
+    @Path("/terminal/{session}")
+    public void sendTerminalMessage(@PathParam("session") String session, @FormParam("command") String command) throws JAXBException, IOException {
+        sh.sendAction(session, new Message("terminal", command));
     }
 
     @GET
