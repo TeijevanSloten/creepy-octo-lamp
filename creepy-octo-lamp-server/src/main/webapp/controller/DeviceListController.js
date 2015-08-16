@@ -2,7 +2,6 @@ app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $loc
     var self = this;
     
     self.init = function () {
-        self.selecterProps = null;
         self.getClients();
         self.poll();
     };
