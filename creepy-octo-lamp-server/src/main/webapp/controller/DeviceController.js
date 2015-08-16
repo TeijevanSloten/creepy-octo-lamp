@@ -17,7 +17,7 @@ app.registerCtrl('DeviceController', function ($routeParams, $http, $timeout) {
 
     self.sendCommand = function () {
         $http.post(self.terminalContext + self.session,
-            "command=" + encodeURIComponent(self.terminalRequest),
+            'command=' + encodeURIComponent(self.terminalRequest),
             {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
         self.terminalRequest = '';
     };
