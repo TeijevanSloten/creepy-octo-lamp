@@ -1,6 +1,7 @@
 package nl.mdtvs.util;
 
 import nl.mdtvs.models.Message;
+import nl.mdtvs.models.WsDevice;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -28,7 +29,7 @@ public class ConvertObject {
         return OBJECT_MAPPER.readValue(jsonProperties, Message.class);
     }
 
-    public static String devicesToJsonString(Map map) throws IOException {
+    public static String devicesToJsonString(Map<String, WsDevice> map) throws IOException {
         return OBJECT_MAPPER.writeValueAsString(map);
     }
 }

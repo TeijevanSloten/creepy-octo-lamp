@@ -31,13 +31,13 @@ public class SessionHandler {
 
     public void sendAction(Message message, String sessionId) throws JAXBException, IOException {
         String actionMessage = ConvertObject.wsActionToJson(message);
-        DeviceManager.getInstance().getDevice(sessionId).sendText(actionMessage);
+        dm.getDevice(sessionId).sendText(actionMessage);
     }
 
     public void sendAction(Message message) throws JAXBException, IOException {
         String actionMessage = ConvertObject.wsActionToJson(message);
         System.out.println("Send: " + actionMessage);
-        DeviceManager.getInstance().getDevices().values()
+        dm.getDevices().values()
                 .forEach(device -> device.sendText(actionMessage));
     }
 
@@ -48,6 +48,10 @@ public class SessionHandler {
     }
 
     public Map<String, WsDevice> getDevices() {
-        return DeviceManager.getInstance().getDevices();
+        return dm.getDevices();
+    }
+
+    public WsDevice getDevice(String sessionId) {
+        return dm.getDevice(sessionId);
     }
 }
