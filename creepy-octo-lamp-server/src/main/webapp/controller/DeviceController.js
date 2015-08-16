@@ -1,10 +1,17 @@
-app.registerCtrl('DeviceController', function ($routeParams, $http, $timeout) {
+app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $timeout) {
     var self = this;
-
+    keyboard
+    .on("ENTER",    function(name, code) { 
+        if(self.terminalRequest !== ""){
+            console.log({ name: name, code: code});
+            self.sendCommand();
+        }
+    });
+    
     self.init = function () {
         self.session = $routeParams.session;
         self.terminalContext = 'resources/action/terminal/';
-
+        self.terminalRequest="";
         self.getDevice();
         self.poll();
     };
