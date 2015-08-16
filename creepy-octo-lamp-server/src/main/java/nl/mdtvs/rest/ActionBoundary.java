@@ -1,7 +1,6 @@
 package nl.mdtvs.rest;
 
 import nl.mdtvs.models.Message;
-import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ConvertObject;
 import nl.mdtvs.websocket.SessionHandler;
 
@@ -10,7 +9,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
-import java.util.Map;
 
 @Path("/action")
 public class ActionBoundary {
@@ -24,18 +22,17 @@ public class ActionBoundary {
     }
 
     @POST
-    @Path("terminal")
-    public void sendTerminalMessage() throws JAXBException, IOException {
-        sh.sendAction(new Message("terminal", "ls -ap"));
+    @Path("/terminal/{session}/{message}")
+    public void sendTerminalMessage(@PathParam("session") String session, @PathParam("message") String message) throws JAXBException, IOException {
+        sh.sendAction(session, new Message("terminal", message));
     }
 
     @GET
-    @Path("terminalresponse")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getTerminalResponse(@QueryParam("session") String sessionId) throws JAXBException, IOException {
-        return sh.getDevices().entrySet().stream()
-                .map(Map.Entry::getValue).map(WsDevice::getTerminalResponse)
-                .reduce((s, s2) -> s + s2).get();
+    @Path("terminal/{session}")
+    public String getTerminalResponse(@PathParam("session") String session) throws JAXBException, IOException {
+        String response = sh.getDevice(session).getTerminalResponse();
+        sh.getDevice(session).setTerminalResponse("");
+        return response;
     }
 
     @GET

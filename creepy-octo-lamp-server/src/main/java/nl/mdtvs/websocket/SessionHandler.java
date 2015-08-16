@@ -29,7 +29,7 @@ public class SessionHandler {
         dm.unRegisterDevice(session);
     }
 
-    public void sendAction(Message message, String sessionId) throws JAXBException, IOException {
+    public void sendAction(String sessionId, Message message) throws JAXBException, IOException {
         String actionMessage = ConvertObject.messageToJson(message);
         dm.getDevice(sessionId).sendText(actionMessage);
     }
