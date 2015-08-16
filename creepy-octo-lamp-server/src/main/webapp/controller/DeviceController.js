@@ -1,11 +1,10 @@
 app.registerCtrl('DeviceController', function ($routeParams, $http, $timeout) {
     var self = this;
-    self.terminalRequest = '';
-
 
     self.init = function () {
         self.session = $routeParams.session;
-        self.terminalResponse = '';
+        self.terminalContext = 'resources/action/terminal/';
+
         self.getDevice();
         self.poll();
     };
@@ -17,12 +16,12 @@ app.registerCtrl('DeviceController', function ($routeParams, $http, $timeout) {
     };
 
     self.sendCommand = function () {
-        $http.post('resources/action/terminal/' + self.session + '/' + self.terminalRequest, {});
+        $http.post(self.terminalContext + self.session + '/' + self.terminalRequest);
         self.terminalRequest = '';
     };
 
     self.getTerminalResponse = function () {
-        $http.get('resources/action/terminal/' + self.session)
+        $http.get(self.terminalContext + self.session)
             .success(function (response) {
                 if (response) {
                     self.terminalResponse = response;

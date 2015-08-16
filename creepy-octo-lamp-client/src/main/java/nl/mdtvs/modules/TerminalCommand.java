@@ -24,7 +24,7 @@ public class TerminalCommand implements Command {
     }
 
     private String getResponse(BufferedReader in) {
-        return in.lines().reduce((acc, curr) -> acc.concat("\n\r" + curr)).get();
+        return in.lines().reduce((acc, curr) -> acc.concat("\n" + curr)).get();
     }
 
     private BufferedReader executeMessage(String message) throws IOException {
