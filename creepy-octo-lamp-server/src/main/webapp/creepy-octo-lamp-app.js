@@ -7,7 +7,7 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
         function requireCtrl(name) {
             return ['$q', '$rootScope', function ($q, $rootScope) {
                     var deferred = $q.defer();
-                    $.getScript("controller/" + name + ".js").success(function () {
+                    $.getScript('controller/' + name + '.js').success(function () {
                         $rootScope.$apply(function () {
                             deferred.resolve();
                         });
@@ -17,7 +17,7 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
         }
 
         $routeProvider.when('/', {
-            templateUrl: "view/app.html"
+            templateUrl: 'view/app.html'
         })
                 .when('/clients', {
                     templateUrl: "view/deviceList.html",
