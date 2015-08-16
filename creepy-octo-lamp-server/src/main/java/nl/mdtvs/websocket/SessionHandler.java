@@ -30,12 +30,12 @@ public class SessionHandler {
     }
 
     public void sendAction(Message message, String sessionId) throws JAXBException, IOException {
-        String actionMessage = ConvertObject.wsActionToJson(message);
+        String actionMessage = ConvertObject.messageToJson(message);
         dm.getDevice(sessionId).sendText(actionMessage);
     }
 
     public void sendAction(Message message) throws JAXBException, IOException {
-        String actionMessage = ConvertObject.wsActionToJson(message);
+        String actionMessage = ConvertObject.messageToJson(message);
         System.out.println("Send: " + actionMessage);
         dm.getDevices().values()
                 .forEach(device -> device.sendText(actionMessage));
@@ -43,7 +43,7 @@ public class SessionHandler {
 
     public void handleMessage(String jsonMessage, Session session) throws JAXBException, IOException {
         System.out.println("Received: " + jsonMessage);
-        Message message = ConvertObject.jsonStringToWsAction(jsonMessage);
+        Message message = ConvertObject.jsonToMessage(jsonMessage);
         commandHandler.execute(message, dm.getDevice(session.getId()));
     }
 

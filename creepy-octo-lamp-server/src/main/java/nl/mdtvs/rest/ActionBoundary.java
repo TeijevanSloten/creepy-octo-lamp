@@ -42,6 +42,13 @@ public class ActionBoundary {
     @Path("/devices")
     @Produces(MediaType.APPLICATION_JSON)
     public String getConnectedDevices() throws IOException {
-        return ConvertObject.devicesToJsonString(sh.getDevices());
+        return ConvertObject.devicesToJson(sh.getDevices());
+    }
+
+    @GET
+    @Path("/devices/{session}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getConnectedDevice(@PathParam("session") String sessionid) throws IOException {
+        return ConvertObject.deviceToJson(sh.getDevice(sessionid));
     }
 }

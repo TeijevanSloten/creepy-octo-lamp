@@ -17,19 +17,23 @@ public class ConvertObject {
     private ConvertObject() {
     }
 
-    public static String wsActionToJson(Message message) throws JAXBException, IOException {
+    public static String messageToJson(Message message) throws JAXBException, IOException {
         return OBJECT_MAPPER.writeValueAsString(message);
     }
 
-    public static Map<String, String> jsonStringToMap(String jsonProperties) throws JAXBException, IOException {
+    public static Map<String, String> jsonToMap(String jsonProperties) throws JAXBException, IOException {
         return new HashMap<>(OBJECT_MAPPER.readValue(jsonProperties, new TypeReference<HashMap<String,String>>() {}));
     }
 
-    public static Message jsonStringToWsAction(String jsonProperties) throws IOException {
+    public static Message jsonToMessage(String jsonProperties) throws IOException {
         return OBJECT_MAPPER.readValue(jsonProperties, Message.class);
     }
 
-    public static String devicesToJsonString(Map<String, WsDevice> map) throws IOException {
+    public static String devicesToJson(Map<String, WsDevice> map) throws IOException {
         return OBJECT_MAPPER.writeValueAsString(map);
+    }
+
+    public static String deviceToJson(WsDevice wsDevice) throws IOException {
+        return OBJECT_MAPPER.writeValueAsString(wsDevice);
     }
 }

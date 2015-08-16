@@ -17,7 +17,7 @@ public class PropertiesCommand implements Command {
     @Override
     public void execute(String message, WsDevice device) {
         try {
-            device.setProperties(ConvertObject.jsonStringToMap(message));
+            device.setProperties(ConvertObject.jsonToMap(message));
         } catch (JAXBException | IOException e) {
             e.printStackTrace();
         }
