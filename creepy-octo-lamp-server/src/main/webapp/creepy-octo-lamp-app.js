@@ -1,6 +1,6 @@
-var app = angular.module("creepyoctolamp", ["ngRoute"]);
+var app = angular.module('creepyoctolamp', ['ngRoute', 'ui.bootstrap']);
 
-app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $controllerProvider) {
+app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $controllerProvider) {
 
         app.registerCtrl = $controllerProvider.register;
 
@@ -16,18 +16,18 @@ app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $
                 }];
         }
 
-        $routeProvider.when("/", {
+        $routeProvider.when('/', {
             templateUrl: "view/app.html"
         })
-                .when("/clients", {
+                .when('/clients', {
                     templateUrl: "view/deviceList.html",
                     resolve: requireCtrl("DeviceListController")
                 })
-                .when("/device/:session", {
+                .when('/device/:session', {
                     templateUrl: "view/device.html",
                     resolve: requireCtrl("DeviceController")
                 })
-                .when("/sendMessage", {
+                .when('/sendMessage', {
                     templateUrl: "view/message.html",
                     resolve: requireCtrl("MessageController")
                 })
@@ -35,12 +35,11 @@ app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $
                     redirectTo: "/"
                 });
     }]);
-
-app.service("keyboard", function ($document, $timeout, keyCodes) {
+app.service('keyboard', function ($document, $timeout, keyCodes) {
     var _this = this;
     this.keyHandlers = {};
 
-    $document.on("keydown", function (event) {
+    $document.on('keydown', function (event) {
         var keyDown = _this.keyHandlers[event.keyCode];
         if (keyDown) {
             event.preventDefault();
@@ -49,7 +48,6 @@ app.service("keyboard", function ($document, $timeout, keyCodes) {
             });
         }
     });
-
     this.on = function (keyName, callback) {
         var keyCode = keyCodes[keyName];
         this.keyHandlers[keyCode] = {callback: callback, name: keyName};

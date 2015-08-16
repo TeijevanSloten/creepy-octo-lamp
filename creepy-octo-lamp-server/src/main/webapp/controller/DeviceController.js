@@ -1,9 +1,8 @@
 app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $timeout) {
     var self = this;
     keyboard
-    .on("ENTER",    function(name, code) { 
+    .on('ENTER', function(name, code) { 
         if(self.terminalRequest !== ""){
-            console.log({ name: name, code: code});
             self.sendCommand();
         }
     });
@@ -11,7 +10,7 @@ app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $t
     self.init = function () {
         self.session = $routeParams.session;
         self.terminalContext = 'resources/action/terminal/';
-        self.terminalRequest="";
+        self.terminalRequest='';
         self.getDevice();
         self.poll();
     };
@@ -23,7 +22,9 @@ app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $t
     };
 
     self.sendCommand = function () {
-        $http.post(self.terminalContext + self.session + '/' + self.terminalRequest);
+        $http.post(self.terminalContext + self.session,
+            'command=' + encodeURIComponent(self.terminalRequest),
+            {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
         self.terminalRequest = '';
     };
 

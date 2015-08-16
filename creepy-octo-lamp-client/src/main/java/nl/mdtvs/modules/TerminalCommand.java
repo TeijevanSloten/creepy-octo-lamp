@@ -19,7 +19,7 @@ public class TerminalCommand implements Command {
         try {
             return new Message("TERMINAL_RESPONSE", getResponse(executeMessage(message)));
         } catch (IOException e) {
-            return new Message("exception", e.getMessage());
+            return new Message("TERMINAL_RESPONSE", e.getMessage());
         }
     }
 
