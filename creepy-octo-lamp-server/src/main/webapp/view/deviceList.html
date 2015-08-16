@@ -1,4 +1,4 @@
-<div class="container" ng-controller="ClientController as ctrl">
+<div class="container" ng-controller="DeviceListController as ctrl">
     <table class="col-md-8 table table-striped">
         <thead>
         <tr>
@@ -9,7 +9,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-dblclick="ctrl.log()" ng-repeat="client in ctrl.clients">
+        <tr ng-dblclick="ctrl.showDevice(client.sessionId)" ng-repeat="client in ctrl.clients">
             <td>{{client.sessionId}}</td>
             <td>{{client.clientIp}}</td>
             <td>{{client.properties["user.name"]}}</td>

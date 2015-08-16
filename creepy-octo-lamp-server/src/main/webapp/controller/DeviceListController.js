@@ -1,4 +1,4 @@
-app.registerCtrl('ClientController', function ($scope, $http, $timeout) {
+app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $location) {
     var self = this;
     
     self.init = function () {
@@ -7,8 +7,8 @@ app.registerCtrl('ClientController', function ($scope, $http, $timeout) {
         self.poll();
     };
 
-    self.log = function(){
-        console.log('log');
+    self.showDevice = function(session){
+        $location.path('/device/' + session);
     };
 
     self.getClients = function () {

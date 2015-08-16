@@ -20,9 +20,13 @@ app.config(["$routeProvider", "$controllerProvider", function ($routeProvider, $
         templateUrl: "view/app.html"
     })
         .when("/clients", {
-            templateUrl: "view/clientList.html",
-            resolve: requireCtrl("ClientController")
+            templateUrl: "view/deviceList.html",
+            resolve: requireCtrl("DeviceListController")
         })
+        .when("/device/:session", {
+            templateUrl: "view/device.html",
+            resolve: requireCtrl("DeviceController")
+        })        
         .when("/sendMessage", {
             templateUrl: "view/message.html",
             resolve: requireCtrl("MessageController")
