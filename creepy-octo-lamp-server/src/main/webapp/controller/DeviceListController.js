@@ -1,21 +1,21 @@
 app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $location, serverEventWatcher) {
     var self = this;
-    
+
     self.init = function () {
         self.getClients();
-        serverEventWatcher.watchSSE('resources/action/serverevent','updateClients',self.handler,false);
+        serverEventWatcher.watchSSE('resources/action/serverevent', 'updateClients', self.handler);
     };
-    
-    self.handler = function(event){
+
+    self.handler = function (event) {
         console.log(event);
         self.getClients();
     };
 
-    $scope.$on('$destroy', function() {
+    $scope.$on('$destroy', function () {
         serverEventWatcher.close();
     });
 
-    self.showDevice = function(session){
+    self.showDevice = function (session) {
         $location.path('/device/' + session);
     };
 
@@ -25,6 +25,6 @@ app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $loc
                 self.clients = response;
             });
     };
-    
+
     self.init();
 });

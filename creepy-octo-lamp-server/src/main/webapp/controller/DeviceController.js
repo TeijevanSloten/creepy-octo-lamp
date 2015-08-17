@@ -10,7 +10,7 @@ app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $t
     self.init = function () {
         self.session = $routeParams.session;
         self.terminalContext = 'resources/action/terminal/';
-        self.terminalRequest='';
+
         self.getDevice();
         self.poll();
     };
@@ -25,7 +25,6 @@ app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $t
         $http.post(self.terminalContext + self.session,
             'command=' + encodeURIComponent(self.terminalRequest),
             {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
-        self.terminalRequest = '';
     };
 
     self.getTerminalResponse = function () {
