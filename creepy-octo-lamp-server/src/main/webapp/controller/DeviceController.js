@@ -1,4 +1,4 @@
-app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $timeout) {
+app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $routeParams, $http, $timeout, $location, $scope) {
     var self = this;
     keyboard
     .on('ENTER', function(name, code) { 
@@ -12,8 +12,21 @@ app.registerCtrl('DeviceController', function (keyboard, $routeParams, $http, $t
         self.terminalContext = 'resources/action/terminal/';
         self.terminalRequest='';
         self.getDevice();
+//        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session,'clientAlive',self.handler,false);
+        
         self.poll();
     };
+
+//    self.handler = function(event){
+//        if(event.data === "false") {
+//            console.log(event);
+//            $timeout($location.path("/clients"), 200);
+//        }
+//    };
+//
+//    $scope.$on('$destroy', function() {
+//        serverEventWatcher.close();
+//    });
 
     self.getDevice = function () {
         $http.get('resources/action/devices/' + self.session).success(function (response) {

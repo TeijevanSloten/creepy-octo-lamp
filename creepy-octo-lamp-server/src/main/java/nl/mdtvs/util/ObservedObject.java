@@ -15,6 +15,10 @@ public class ObservedObject extends Observable {
     }
     
     public ObservedObject setValue(Object value) {
+        if(value == null) {
+            setChanged();
+            return this;
+        }
         check(value.toString());
         return this;
     }

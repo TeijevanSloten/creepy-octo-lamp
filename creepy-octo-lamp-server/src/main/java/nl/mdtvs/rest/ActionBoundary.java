@@ -62,7 +62,7 @@ public class ActionBoundary {
 
     @GET
     @Path("serverevent")
-    public void ServerEventPusher(@Context HttpServletResponse response) throws IOException, InterruptedException {
+    public void serverEventPusher(@Context HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
         response.setContentType("text/event-stream, charset=UTF-8");
         
@@ -71,5 +71,25 @@ public class ActionBoundary {
         
         out.print("retry: 300\n");
         out.flush();
+    }
+    
+    @GET
+    @Path("sessionevent/{session}")
+    public void sessionEventPusher(@Context HttpServletResponse response, @PathParam("session") String sessionid) throws IOException{
+        PrintWriter out = response.getWriter();
+        response.setContentType("text/event-stream, charset=UTF-8");
+        
+        Object device = null;
+        try {
+            device = sh.getDevice(sessionid);
+        } catch (Exception e) {
+            device = null;
+        } finally {
+            evtPush.observeObj(1,device);
+            evtPush.onChange(1,device,() -> evtPush.execute(out,"clientAlive","false"));
+
+            out.print("retry: 300\n");
+            out.flush();        
+        }
     }
 }

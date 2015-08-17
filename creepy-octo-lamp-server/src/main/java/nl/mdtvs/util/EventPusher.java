@@ -19,9 +19,13 @@ public class EventPusher {
         return this;
     }
 
+    public void removeObservedObj(Integer key){
+        obsList.remove(key);
+    }
+    
     public void execute(PrintWriter out, String event, String data) {
         out.print("event:" + event + "\n");
-        out.print("data: " + data + "\n\n");
+        out.print("data:" + data + "\n\n");
     }
 
     public void execute(PrintWriter out, String event) {
@@ -30,11 +34,16 @@ public class EventPusher {
     }
     
     public void onChange(Integer key, Object value, Runnable r) {
-        ObservedObject o = obsList.get(key).setValue(value);
-        
-        if(o.hasChanged()) {
+        if(value != null){
+            ObservedObject o = obsList.get(key).setValue(value);
+            
+            if(o.hasChanged()) {
+                r.run();
+                o.clearChanged();
+            }            
+        } else {
+            removeObservedObj(key);
             r.run();
-            o.clearChanged();
         }
     }
 }
