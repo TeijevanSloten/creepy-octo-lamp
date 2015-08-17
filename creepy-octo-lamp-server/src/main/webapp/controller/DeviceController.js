@@ -10,7 +10,7 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
     self.init = function () {
         self.session = $routeParams.session;
         self.terminalContext = 'resources/action/terminal/';
-        self.terminalRequest='';
+
         self.getDevice();
 //        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session,'clientAlive',self.handler,false);
         
@@ -38,7 +38,6 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
         $http.post(self.terminalContext + self.session,
             'command=' + encodeURIComponent(self.terminalRequest),
             {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
-        self.terminalRequest = '';
     };
 
     self.getTerminalResponse = function () {

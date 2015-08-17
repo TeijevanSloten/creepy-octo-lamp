@@ -2,55 +2,51 @@ var app = angular.module('creepyoctolamp', ['ngRoute', 'ui.bootstrap']);
 
 app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $controllerProvider) {
 
-        app.registerCtrl = $controllerProvider.register;
+    app.registerCtrl = $controllerProvider.register;
 
-        function requireCtrl(name) {
-            return ['$q', '$rootScope', function ($q, $rootScope) {
-                    var deferred = $q.defer();
-                    $.getScript('controller/' + name + '.js').success(function () {
-                        $rootScope.$apply(function () {
-                            deferred.resolve();
-                        });
-                    });
-                    return deferred.promise;
-                }];
-        }
-
-        $routeProvider.when('/', {
-            templateUrl: 'view/app.html'
-        })
-                .when('/clients', {
-                    templateUrl: "view/deviceList.html",
-                    resolve: requireCtrl("DeviceListController")
-                })
-                .when('/device/:session', {
-                    templateUrl: "view/device.html",
-                    resolve: requireCtrl("DeviceController")
-                })
-                .when('/sendMessage', {
-                    templateUrl: "view/message.html",
-                    resolve: requireCtrl("MessageController")
-                })
-                .otherwise({
-                    redirectTo: "/"
+    function requireCtrl(name) {
+        return ['$q', '$rootScope', function ($q, $rootScope) {
+            var deferred = $q.defer();
+            $.getScript('controller/' + name + '.js').success(function () {
+                $rootScope.$apply(function () {
+                    deferred.resolve();
                 });
-    }]);
+            });
+            return deferred.promise;
+        }];
+    }
 
-app.service('serverEventWatcher', function(){
+    $routeProvider.when('/', {
+        templateUrl: 'view/app.html'
+    })
+        .when('/clients', {
+            templateUrl: "view/deviceList.html",
+            resolve: requireCtrl("DeviceListController")
+        })
+        .when('/device/:session', {
+            templateUrl: "view/device.html",
+            resolve: requireCtrl("DeviceController")
+        })
+        .when('/sendMessage', {
+            templateUrl: "view/message.html",
+            resolve: requireCtrl("MessageController")
+        })
+        .otherwise({
+            redirectTo: "/"
+        });
+}]);
+
+app.service('serverEventWatcher', function () {
     var self = this;
-        self.setSource = function(url){
 
-        };
-        
-        self.watchSSE = function(url, event, f, auth){
-            self.source = new EventSource(url);
-            self.source.addEventListener(event, f,auth);
-        };
-        
-        self.close = function(){
-            self.source.close();
-        };
-        
+    self.watchSSE = function (url, event, f) {
+        self.source = new EventSource(url);
+        self.source.addEventListener(event, f, false);
+    };
+
+    self.close = function () {
+        self.source.close();
+    };
 });
 
 app.service('keyboard', function ($document, $timeout, keyCodes) {

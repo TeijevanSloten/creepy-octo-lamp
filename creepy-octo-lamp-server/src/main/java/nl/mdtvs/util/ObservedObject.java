@@ -4,16 +4,12 @@ import java.util.Observable;
 
 public class ObservedObject extends Observable {
 
-    private String watchedValue="";
-    
+    private String watchedValue;
+
     public ObservedObject(Object value) {
         this.watchedValue = value.toString();
     }
-    
-    public boolean hasWatchValue(){
-        return !this.watchedValue.isEmpty();
-    }
-    
+
     public ObservedObject setValue(Object value) {
         if(value == null) {
             setChanged();
@@ -31,7 +27,7 @@ public class ObservedObject extends Observable {
     }
 
     @Override
-    public void clearChanged(){
+    public void clearChanged() {
         super.clearChanged();
     }
 

@@ -52,6 +52,10 @@ public class SessionHandler {
     }
 
     public WsDevice getDevice(String sessionId) {
-        return dm.getDevice(sessionId);
+        try {
+            return dm.getDevice(sessionId);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

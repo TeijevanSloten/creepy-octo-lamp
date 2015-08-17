@@ -1,29 +1,25 @@
 package nl.mdtvs.rest;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBException;
 import nl.mdtvs.models.Message;
 import nl.mdtvs.util.ConvertObject;
 import nl.mdtvs.util.EventPusher;
 import nl.mdtvs.websocket.SessionHandler;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @Path("/action")
 public class ActionBoundary {
 
     @Inject
     EventPusher evtPush;
-    
+
     @Inject
     private SessionHandler sh;
 
@@ -65,10 +61,11 @@ public class ActionBoundary {
     public void serverEventPusher(@Context HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
         response.setContentType("text/event-stream, charset=UTF-8");
-        
-        evtPush.observeObj(0,sh.getDevices());
-        evtPush.onChange(0,sh.getDevices(),() -> evtPush.execute(out,"updateClients"));
-        
+
+        evtPush.addInitialObserveObject(0, sh.getDevices());
+        evtPush.onValueChange(0, sh.getDevices(),()->{
+            out.print(evtPush.generateEvent("updateClients"));
+        });
         out.print("retry: 300\n");
         out.flush();
     }
@@ -79,17 +76,13 @@ public class ActionBoundary {
         PrintWriter out = response.getWriter();
         response.setContentType("text/event-stream, charset=UTF-8");
         
-        Object device = null;
-        try {
-            device = sh.getDevice(sessionid);
-        } catch (Exception e) {
-            device = null;
-        } finally {
-            evtPush.observeObj(1,device);
-            evtPush.onChange(1,device,() -> evtPush.execute(out,"clientAlive","false"));
+        Object device = sh.getDevice(sessionid);
+        evtPush.addInitialObserveObject(1,device);
+        evtPush.onValueChange(1,device,()->{
+            out.print(evtPush.generateEvent("updateClients","false"));
+        });
 
-            out.print("retry: 300\n");
-            out.flush();        
-        }
+        out.print("retry: 300\n");
+        out.flush();        
     }
 }
