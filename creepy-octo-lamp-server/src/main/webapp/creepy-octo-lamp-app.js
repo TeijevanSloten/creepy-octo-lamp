@@ -35,6 +35,24 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
                     redirectTo: "/"
                 });
     }]);
+
+app.service('serverEventWatcher', function(){
+    var self = this;
+        self.setSource = function(url){
+
+        };
+        
+        self.watchSSE = function(url, event, f, auth){
+            self.source = new EventSource(url);
+            self.source.addEventListener(event, f,auth);
+        };
+        
+        self.close = function(){
+            self.source.close();
+        };
+        
+});
+
 app.service('keyboard', function ($document, $timeout, keyCodes) {
     var self = this;
     this.keyHandlers = {};

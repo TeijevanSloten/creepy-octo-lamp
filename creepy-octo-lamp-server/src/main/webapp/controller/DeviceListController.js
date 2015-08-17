@@ -1,16 +1,18 @@
-app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $location, $interval) {
+app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $location, serverEventWatcher) {
     var self = this;
     
     self.init = function () {
         self.getClients();
-            self.source = new EventSource('http://localhost:8080/creepy-octo-lamp-server/resources/action/serverevent');
-            self.source.addEventListener('updateClients', function(event){
-                console.log(event);
-                self.getClients();
-            },false);
+        serverEventWatcher.watchSSE('resources/action/serverevent','updateClients',self.handler,false);
     };
+    
+    self.handler = function(event){
+        console.log(event);
+        self.getClients();
+    };
+
     $scope.$on('$destroy', function() {
-        self.source.close();
+        serverEventWatcher.close();
     });
 
     self.showDevice = function(session){
