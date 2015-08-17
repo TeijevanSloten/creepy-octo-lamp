@@ -36,11 +36,11 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
                 });
     }]);
 app.service('keyboard', function ($document, $timeout, keyCodes) {
-    var _this = this;
+    var self = this;
     this.keyHandlers = {};
 
     $document.on('keydown', function (event) {
-        var keyDown = _this.keyHandlers[event.keyCode];
+        var keyDown = self.keyHandlers[event.keyCode];
         if (keyDown) {
             event.preventDefault();
             $timeout(function () {
