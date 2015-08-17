@@ -16,12 +16,15 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 import nl.mdtvs.models.Message;
 import nl.mdtvs.util.ConvertObject;
-import nl.mdtvs.util.ObservedObject;
+import nl.mdtvs.util.EventPusher;
 import nl.mdtvs.websocket.SessionHandler;
 
 @Path("/action")
 public class ActionBoundary {
 
+    @Inject
+    EventPusher evtPush;
+    
     @Inject
     private SessionHandler sh;
 
@@ -58,22 +61,16 @@ public class ActionBoundary {
         return ConvertObject.deviceToJson(sh.getDevice(sessionid));
     }
 
-    private ObservedObject deviceListObs;
-    
+        
     @GET
-    @Path("event")
-    public void ChangeListener(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException, InterruptedException {
-        deviceListObs = ObservedObject.getInstance();
-        if(!deviceListObs.hasWatchValue()) deviceListObs.setWatcher(sh.getDevices());
+    @Path("serverevent")
+    public void ServerEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException, InterruptedException {
         PrintWriter out = response.getWriter();
         response.setContentType("text/event-stream, charset=UTF-8");
-        deviceListObs.setValue(sh.getDevices());
         
-        if(deviceListObs.hasChanged()){
-            out.print("event: updateClients\n");
-            out.print("data: updateClients\n\n");
-            deviceListObs.clearChanged();
-        }
+        evtPush.observeObj(0,sh.getDevices());
+        evtPush.onChange(0,sh.getDevices(),() -> evtPush.execute(out,"updateClients"));
+
         out.print("retry: 300\n");
         out.flush();
     }

@@ -3,7 +3,7 @@ app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $loc
     
     self.init = function () {
         self.getClients();
-            self.source = new EventSource('http://localhost:8080/creepy-octo-lamp-server/resources/action/event');
+            self.source = new EventSource('http://localhost:8080/creepy-octo-lamp-server/resources/action/serverevent');
             self.source.addEventListener('updateClients', function(event){
                 console.log(event);
                 self.getClients();
