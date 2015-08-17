@@ -3,7 +3,6 @@ package nl.mdtvs.rest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -61,16 +60,15 @@ public class ActionBoundary {
         return ConvertObject.deviceToJson(sh.getDevice(sessionid));
     }
 
-        
     @GET
     @Path("serverevent")
-    public void ServerEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException, InterruptedException {
+    public void ServerEventPusher(@Context HttpServletResponse response) throws IOException, InterruptedException {
         PrintWriter out = response.getWriter();
         response.setContentType("text/event-stream, charset=UTF-8");
         
         evtPush.observeObj(0,sh.getDevices());
         evtPush.onChange(0,sh.getDevices(),() -> evtPush.execute(out,"updateClients"));
-
+        
         out.print("retry: 300\n");
         out.flush();
     }
