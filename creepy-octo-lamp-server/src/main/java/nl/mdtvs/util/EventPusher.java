@@ -11,7 +11,7 @@ public class EventPusher {
     private final Map<Integer, ObservedObject> obsList = new HashMap<>();
 
     public void addInitialObserveObject(Integer key, Object value) {
-        if(!obsList.containsKey(key)) {
+        if(!obsList.containsKey(key) && value != null) {
             obsList.put(key, new ObservedObject(value));
         }
     }

@@ -79,7 +79,7 @@ public class ActionBoundary {
         Object device = sh.getDevice(sessionid);
         evtPush.addInitialObserveObject(1,device);
         evtPush.onValueChange(1,device,()->{
-            out.print(evtPush.generateEvent("updateClients","false"));
+            out.print(evtPush.generateEvent("clientAlive","false"));
         });
 
         out.print("retry: 300\n");

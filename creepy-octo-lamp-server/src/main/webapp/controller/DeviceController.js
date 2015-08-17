@@ -12,21 +12,21 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
         self.terminalContext = 'resources/action/terminal/';
 
         self.getDevice();
-//        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session,'clientAlive',self.handler,false);
+        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session,'clientAlive',self.handler,false);
         
-        self.poll();
+//        self.poll();
     };
 
-//    self.handler = function(event){
-//        if(event.data === "false") {
-//            console.log(event);
-//            $timeout($location.path("/clients"), 200);
-//        }
-//    };
-//
-//    $scope.$on('$destroy', function() {
-//        serverEventWatcher.close();
-//    });
+    self.handler = function(event){
+        if(event.data === "false") {
+            console.log(event);
+            $timeout($location.path("/clients"), 200);
+        }
+    };
+
+    $scope.$on('$destroy', function() {
+        serverEventWatcher.close();
+    });
 
     self.getDevice = function () {
         $http.get('resources/action/devices/' + self.session).success(function (response) {
@@ -49,12 +49,12 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
             });
     };
 
-    self.poll = function () {
-        $timeout(function () {
-            self.getTerminalResponse();
-            self.poll();
-        }, 200);
-    };
+//    self.poll = function () {
+//        $timeout(function () {
+//            self.getTerminalResponse();
+//            self.poll();
+//        }, 200);
+//    };
 
     self.init();
 });
