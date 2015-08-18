@@ -39,9 +39,12 @@ app.config(['$routeProvider', '$controllerProvider', function ($routeProvider, $
 app.service('serverEventWatcher', function () {
     var self = this;
 
-    self.watchSSE = function (url, event, f) {
+    self.watchSSE = function (url) {
         self.source = new EventSource(url);
-        self.source.addEventListener(event, f, false);
+    };
+    
+    self.watchEvent = function(event, handler){
+        self.source.addEventListener(event, handler, false);
     };
 
     self.close = function () {

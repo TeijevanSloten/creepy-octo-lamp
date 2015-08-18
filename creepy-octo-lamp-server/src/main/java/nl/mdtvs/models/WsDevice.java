@@ -28,6 +28,7 @@ public class WsDevice {
         this.deviceId = properties.get("DEVICE_ID");
         this.clientIp = properties.get("IP");
         this.properties = properties;
+        this.terminalResponse = "";
     }
 
     public void setTerminalResponse(String terminalResponse) {

@@ -3,7 +3,8 @@ app.registerCtrl('DeviceListController', function ($scope, $http, $timeout, $loc
 
     self.init = function () {
         self.getClients();
-        serverEventWatcher.watchSSE('resources/action/serverevent', 'updateClients', self.handler);
+        serverEventWatcher.watchSSE('resources/action/serverevent');
+        serverEventWatcher.watchEvent('updateClients', self.handler);
     };
 
     self.handler = function (event) {

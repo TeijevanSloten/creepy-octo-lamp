@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.function.Consumer;
+import nl.mdtvs.models.WsDevice;
 
 @Path("/action")
 public class ActionBoundary {
@@ -63,7 +65,7 @@ public class ActionBoundary {
         response.setContentType("text/event-stream, charset=UTF-8");
 
         evtPush.addInitialObserveObject(0, sh.getDevices());
-        evtPush.onValueChange(0, sh.getDevices(),()->{
+        evtPush.onValueChange(0, sh.getDevices(),(x)->{
             out.print(evtPush.generateEvent("updateClients"));
         });
         out.print("retry: 300\n");
@@ -76,12 +78,18 @@ public class ActionBoundary {
         PrintWriter out = response.getWriter();
         response.setContentType("text/event-stream, charset=UTF-8");
         
-        Object device = sh.getDevice(sessionid);
+        WsDevice device = sh.getDevice(sessionid);
         evtPush.addInitialObserveObject(1,device);
-        evtPush.onValueChange(1,device,()->{
-            out.print(evtPush.generateEvent("clientAlive","false"));
+        evtPush.onValueChange(1,device,(x) -> {
+            if(x == null) out.print(evtPush.generateEvent("clientAlive","false"));
         });
-
+        if(device != null){
+            evtPush.addInitialObserveObject(2,device.getTerminalResponse());
+            evtPush.onValueChange(2,device.getTerminalResponse(), 
+                (x)->out.print(evtPush.generateEvent("clientTerminalResponse",x.toString()))
+            );
+        }
+                
         out.print("retry: 300\n");
         out.flush();        
     }

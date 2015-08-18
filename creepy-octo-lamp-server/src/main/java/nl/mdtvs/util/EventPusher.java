@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @ApplicationScoped
 public class EventPusher {
@@ -20,17 +22,17 @@ public class EventPusher {
         obsList.remove(key);
     }
     
-    public void onValueChange(Integer key, Object value, Runnable r) {
+    public void onValueChange(Integer key, Object value, Consumer r) {
         if(value != null){
             ObservedObject o = obsList.get(key).setValue(value);
             
             if(o.hasChanged()) {
-                r.run();
+                r.accept(value);
                 o.clearChanged();
             }            
         } else {
             removeObservedObj(key);
-            r.run();
+            r.accept(value);
         }
     }
     

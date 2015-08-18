@@ -12,18 +12,23 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
         self.terminalContext = 'resources/action/terminal/';
 
         self.getDevice();
-        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session,'clientAlive',self.handler,false);
-        
-//        self.poll();
+        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session);
+        serverEventWatcher.watchEvent('clientAlive',self.handleClientAlive);
+        serverEventWatcher.watchEvent('clientTerminalResponse',self.handleClientTerminalResponse);
     };
 
-    self.handler = function(event){
+    self.handleClientAlive = function(event){
         if(event.data === "false") {
             console.log(event);
             $timeout($location.path("/clients"), 200);
         }
     };
 
+    self.handleClientTerminalResponse = function(event){
+        console.log(event);
+        self.terminalResponse = event.data;
+    };
+    
     $scope.$on('$destroy', function() {
         serverEventWatcher.close();
     });
@@ -39,22 +44,6 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
             'command=' + encodeURIComponent(self.terminalRequest),
             {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
     };
-
-    self.getTerminalResponse = function () {
-        $http.get(self.terminalContext + self.session)
-            .success(function (response) {
-                if (response) {
-                    self.terminalResponse = response;
-                }
-            });
-    };
-
-//    self.poll = function () {
-//        $timeout(function () {
-//            self.getTerminalResponse();
-//            self.poll();
-//        }, 200);
-//    };
 
     self.init();
 });
