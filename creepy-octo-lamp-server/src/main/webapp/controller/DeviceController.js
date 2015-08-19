@@ -12,7 +12,7 @@ app.registerCtrl('DeviceController', function (keyboard, serverEventWatcher, $ro
         self.terminalContext = 'resources/action/terminal/';
 
         self.getDevice();
-        serverEventWatcher.watchSSE('resources/action/sessionevent/' + self.session);
+        serverEventWatcher.watchSSE('resources/sse/sessionevent/' + self.session);
         serverEventWatcher.watchEvent('clientAlive',self.handleClientAlive);
         serverEventWatcher.watchEvent('clientTerminalResponse',self.handleClientTerminalResponse);
     };

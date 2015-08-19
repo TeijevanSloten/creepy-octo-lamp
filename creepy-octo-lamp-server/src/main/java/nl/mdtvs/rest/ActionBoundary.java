@@ -2,25 +2,16 @@ package nl.mdtvs.rest;
 
 import nl.mdtvs.models.Message;
 import nl.mdtvs.util.ConvertObject;
-import nl.mdtvs.util.EventPusher;
 import nl.mdtvs.websocket.SessionHandler;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.function.Consumer;
-import nl.mdtvs.models.WsDevice;
 
 @Path("/action")
 public class ActionBoundary {
-
-    @Inject
-    EventPusher evtPush;
 
     @Inject
     private SessionHandler sh;
@@ -58,39 +49,4 @@ public class ActionBoundary {
         return ConvertObject.deviceToJson(sh.getDevice(sessionid));
     }
 
-    @GET
-    @Path("serverevent")
-    public void serverEventPusher(@Context HttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/event-stream, charset=UTF-8");
-
-        evtPush.addInitialObserveObject(0, sh.getDevices());
-        evtPush.onValueChange(0, sh.getDevices(),(x)->{
-            out.print(evtPush.generateEvent("updateClients"));
-        });
-        out.print("retry: 300\n");
-        out.flush();
-    }
-    
-    @GET
-    @Path("sessionevent/{session}")
-    public void sessionEventPusher(@Context HttpServletResponse response, @PathParam("session") String sessionid) throws IOException{
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/event-stream, charset=UTF-8");
-        
-        WsDevice device = sh.getDevice(sessionid);
-        evtPush.addInitialObserveObject(1,device);
-        evtPush.onValueChange(1,device,(x) -> {
-            if(x == null) out.print(evtPush.generateEvent("clientAlive","false"));
-        });
-        if(device != null){
-            evtPush.addInitialObserveObject(2,device.getTerminalResponse());
-            evtPush.onValueChange(2,device.getTerminalResponse(), 
-                (x)->out.print(evtPush.generateEvent("clientTerminalResponse",x.toString()))
-            );
-        }
-                
-        out.print("retry: 300\n");
-        out.flush();        
-    }
 }
