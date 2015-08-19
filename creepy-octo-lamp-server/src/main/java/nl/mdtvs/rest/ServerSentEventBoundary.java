@@ -28,7 +28,6 @@ public class ServerSentEventBoundary {
 //        final AsyncContext asyncContext = request.startAsync(request, response);
 //        asyncContext.addListener(new Handler(asyncContext));
 //        asyncContext.start(new Task(asyncContext, evtPush, sh));
-
     @GET
     @Path("serverscoped")
     public void serverEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException {
@@ -56,8 +55,19 @@ public class ServerSentEventBoundary {
             device = sh.getDevice(sessionid);
             evtPush.addInitialObserveObject(device.getSessionId(), () -> sh.getDevice(sessionid));
             evtPush.onValueChange(device.getSessionId(), out, DisconnectedEventHandler());
+
+            evtPush.addInitialObserveObject(device.getSessionId() + "terminalResponse", () -> sh.getDevice(sessionid).getTerminalResponse());
+            evtPush.onValueChange(device.getSessionId() + "terminalResponse", out, TerminalResponseEventHandler());
         } catch (Exception e) {
         }
+    }
+
+    private Function<PrintWriter, Function<Object, Void>> TerminalResponseEventHandler() {
+        return w -> o -> {
+            w.print(generateEvent("clientTerminalResponse", o.toString()));
+            w.flush();
+            return null;
+        };
     }
 
     private Function<PrintWriter, Function<Object, Void>> DisconnectedEventHandler() {
@@ -69,7 +79,7 @@ public class ServerSentEventBoundary {
             return null;
         };
     }
-    
+
     private String generateEvent(String event) {
         return generateEvent(event, "");
     }
@@ -83,7 +93,7 @@ public class ServerSentEventBoundary {
         out = response.getWriter();
 
         response.setContentType("text/event-stream, charset=UTF-8");
-        
+
         out.write("retry:300\n");
         out.flush();
     }
