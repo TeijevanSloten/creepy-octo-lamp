@@ -20,7 +20,7 @@ public class ObservedObjectManager {
     
     public void onValueChange(String key, PrintWriter o, Function<PrintWriter,Function<Object,Void>> f) {//, PrintWriter out, Function<,Consumer<Object>> f
         ObservedObject obs = obsList.get(key);
-        if(obs.hasChangedAndCleared()){
+        if(obs.hasChanged()){
             f.apply(o).apply(obs.getWatchedValue());
         }
     }    
