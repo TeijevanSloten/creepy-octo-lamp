@@ -11,20 +11,17 @@ import java.util.function.Supplier;
 public class ObservedObjectManager {
 
     private final Map<String, ObservedObject> obsList = new HashMap<>();
-    private final Map<String, Supplier> supplierList = new HashMap<>();
 
     public void addInitialObserveObject(String key, Supplier value) {
         if(!obsList.containsKey(key) && value.get() != null) {
-            supplierList.put(key, value);
-            obsList.put(key, new ObservedObject(value.get()));
+            obsList.put(key, new ObservedObject(value));
         }
     }     
     
     public void onValueChange(String key, PrintWriter o, Function<PrintWriter,Function<Object,Void>> f) {//, PrintWriter out, Function<,Consumer<Object>> f
-        Object sup = supplierList.get(key).get();
         ObservedObject obs = obsList.get(key);
-        if(obs.hasChangedAndCleared(sup)){
-            f.apply(o).apply(sup);
+        if(obs.hasChangedAndCleared()){
+            f.apply(o).apply(obs.getWatchedValue());
         }
     }    
 }
