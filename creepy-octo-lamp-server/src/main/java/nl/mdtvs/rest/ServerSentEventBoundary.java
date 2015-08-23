@@ -3,6 +3,7 @@ package nl.mdtvs.rest;
 import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.rest.AsyncSSERunner.ThrowingRunnable;
 import nl.mdtvs.util.ObservedObjectManager;
+import nl.mdtvs.util.ThrowableBiConsumer;
 import nl.mdtvs.websocket.SessionHandler;
 
 import javax.inject.Inject;
@@ -61,12 +62,11 @@ public class ServerSentEventBoundary {
         };
     }
 
-    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> changedListEventHandler() {
-        return w -> o -> {
+    private ThrowableBiConsumer<ServletOutputStream, Object> changedListEventHandler() {
+        return (w, o) -> {
             String e = generateEvent("updateClients");
             w.print(e);
             w.flush();
-            return null;
         };
     }
 
@@ -90,27 +90,19 @@ public class ServerSentEventBoundary {
         };
     }
 
-    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> terminalResponseEventHandler() {
-        return w -> o -> {
+    private ThrowableBiConsumer<ServletOutputStream, Object> terminalResponseEventHandler() {
+        return (w, o) -> {
             w.print(generateEvent("clientTerminalResponse", o.toString()));
             w.flush();
-            return null;
         };
     }
 
-    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> disconnectedEventHandler() {
-        return w -> o -> {
+    private ThrowableBiConsumer<ServletOutputStream, Object> disconnectedEventHandler() {
+        return (w, o) -> {
             if (o == null) {
                 w.print(generateEvent("clientAlive", "false"));
                 w.flush();
             }
-            return null;
         };
-    }
-
-    @FunctionalInterface
-    public interface ThrowableFunction<T, R> {
-
-        R apply(T t) throws Exception;
     }
 }

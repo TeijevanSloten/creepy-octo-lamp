@@ -20,7 +20,7 @@ public class AsyncSSERunner {
             try {
                 runnable.run();
                 Thread.sleep(delayInMilliSeconds);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 async.complete();
                 interupted = true;
@@ -30,6 +30,6 @@ public class AsyncSSERunner {
 
     @FunctionalInterface
     public interface ThrowingRunnable {
-        void run() throws Exception;
+        void run() throws Throwable;
     }
 }

@@ -2,6 +2,7 @@ package nl.mdtvs.models;
 
 import lombok.Getter;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import javax.websocket.Session;
 import java.util.HashMap;
 import java.util.Map;
