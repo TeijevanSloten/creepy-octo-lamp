@@ -18,7 +18,8 @@ public class ObservedObject extends Observable {
     public Object getWatchedValue() {
         return watchedValue;
     }
-    
+
+    @Override
     public boolean hasChanged() {
         String value = toString(s.get());
         if (!Objects.equals(watchedValue, value)) {

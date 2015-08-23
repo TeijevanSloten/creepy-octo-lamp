@@ -1,9 +1,8 @@
 package nl.mdtvs.rest;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.function.Function;
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -13,6 +12,7 @@ import javax.ws.rs.core.Context;
 import nl.mdtvs.models.WsDevice;
 import nl.mdtvs.util.ObservedObjectManager;
 import nl.mdtvs.websocket.SessionHandler;
+import nl.mdtvs.rest.AsyncSSERunner.ThrowingRunnable;
 
 @Path("/sse")
 public class ServerSentEventBoundary {
@@ -21,23 +21,53 @@ public class ServerSentEventBoundary {
     private SessionHandler sh;
 
     @Inject
-    private ObservedObjectManager evtPush;
+    private ObservedObjectManager obsManager;
 
-    private PrintWriter out;
-
-//        final AsyncContext asyncContext = request.startAsync(request, response);
-//        asyncContext.addListener(new Handler(asyncContext));
-//        asyncContext.start(new Task(asyncContext, evtPush, sh));
-    @GET
-    @Path("serverscoped")
-    public void serverEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException {
-        setHeader(response);
-
-        evtPush.addInitialObserveObject("DEVICES", () -> sh.getDevices());
-        evtPush.onValueChange("DEVICES", out, changedListEventHandler());
+    private String generateEvent(String event) {
+        return generateEvent(event, "");
     }
 
-    private Function<PrintWriter, Function<Object, Void>> changedListEventHandler() {
+    private String generateEvent(String event, String data) {
+        return "event:" + event + "\n" + "data:" + data + "\n\n";
+    }
+
+    @GET
+    @Path("test")
+    public void test(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
+        AsyncSSERunner ar = new AsyncSSERunner(request, response);
+        ar.start(sseTestTask(response), 1000);
+    }
+
+    public ThrowingRunnable sseTestTask(HttpServletResponse response) throws IOException {
+        ServletOutputStream os = response.getOutputStream();
+        return () -> {
+            os.print(generateEvent("test"));
+            os.flush();
+        };
+    }
+
+    @FunctionalInterface
+    public interface ThrowableFunction<T, R> {
+
+        R apply(T t) throws Exception;
+    }
+
+    @GET
+    @Path("serverscoped")
+    public void serverEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
+        AsyncSSERunner ar = new AsyncSSERunner(request, response);
+        ar.start(sseServerScopedTask(response), 1000);
+    }
+
+    public ThrowingRunnable sseServerScopedTask(HttpServletResponse response) throws IOException {
+        ServletOutputStream os = response.getOutputStream();
+        return () -> {
+            obsManager.addInitialObserveObject("DEVICES", () -> sh.getDevices());
+            obsManager.onValueChange("DEVICES", os, changedListEventHandler());
+        };
+    }
+
+    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> changedListEventHandler() {
         return w -> o -> {
             String e = generateEvent("updateClients");
             w.print(e);
@@ -49,20 +79,24 @@ public class ServerSentEventBoundary {
     @GET
     @Path("sessionscoped/sessionid")
     public void sessionEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response, @PathParam("sessionid") String sessionid) throws IOException {
-        setHeader(response);
-        WsDevice device;
-        try {
-            device = sh.getDevice(sessionid);
-            evtPush.addInitialObserveObject(device.getSessionId(), () -> sh.getDevice(sessionid));
-            evtPush.onValueChange(device.getSessionId(), out, DisconnectedEventHandler());
-
-            evtPush.addInitialObserveObject(device.getSessionId() + "terminalResponse", () -> sh.getDevice(sessionid).getTerminalResponse());
-            evtPush.onValueChange(device.getSessionId() + "terminalResponse", out, TerminalResponseEventHandler());
-        } catch (Exception e) {
-        }
+        AsyncSSERunner ar = new AsyncSSERunner(request, response);
+        ar.start(sseSessionScopedTask(response, sessionid), 1000);
     }
 
-    private Function<PrintWriter, Function<Object, Void>> TerminalResponseEventHandler() {
+    public ThrowingRunnable sseSessionScopedTask(HttpServletResponse response, String sessionid) throws IOException {
+        ServletOutputStream os = response.getOutputStream();
+        return () -> {
+            WsDevice device;
+            device = sh.getDevice(sessionid);
+            obsManager.addInitialObserveObject(device.getSessionId(), () -> sh.getDevice(sessionid));
+            obsManager.onValueChange(device.getSessionId(), os, DisconnectedEventHandler());
+
+            obsManager.addInitialObserveObject(device.getSessionId() + "terminalResponse", () -> sh.getDevice(sessionid).getTerminalResponse());
+            obsManager.onValueChange(device.getSessionId() + "terminalResponse", os, TerminalResponseEventHandler());
+        };
+    }
+
+    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> TerminalResponseEventHandler() {
         return w -> o -> {
             w.print(generateEvent("clientTerminalResponse", o.toString()));
             w.flush();
@@ -70,7 +104,7 @@ public class ServerSentEventBoundary {
         };
     }
 
-    private Function<PrintWriter, Function<Object, Void>> DisconnectedEventHandler() {
+    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> DisconnectedEventHandler() {
         return w -> o -> {
             if (o == null) {
                 w.print(generateEvent("clientAlive", "false"));
@@ -80,21 +114,4 @@ public class ServerSentEventBoundary {
         };
     }
 
-    private String generateEvent(String event) {
-        return generateEvent(event, "");
-    }
-
-    private String generateEvent(String event, String data) {
-        return "event:" + event + "\n"
-                + "data:" + data + "\n\n";
-    }
-
-    private void setHeader(HttpServletResponse response) throws IOException {
-        out = response.getWriter();
-
-        response.setContentType("text/event-stream, charset=UTF-8");
-
-        out.write("retry:300\n");
-        out.flush();
-    }
 }

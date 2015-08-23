@@ -1,11 +1,11 @@
 package nl.mdtvs.util;
 
-import java.io.PrintWriter;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.servlet.ServletOutputStream;
+import nl.mdtvs.rest.ServerSentEventBoundary.ThrowableFunction;
 
 @ApplicationScoped
 public class ObservedObjectManager {
@@ -18,7 +18,7 @@ public class ObservedObjectManager {
         }
     }     
     
-    public void onValueChange(String key, PrintWriter o, Function<PrintWriter,Function<Object,Void>> f) {//, PrintWriter out, Function<,Consumer<Object>> f
+    public void onValueChange(String key, ServletOutputStream o, ThrowableFunction<ServletOutputStream,ThrowableFunction<Object,Void>> f) throws Exception {
         ObservedObject obs = obsList.get(key);
         if(obs.hasChanged()){
             f.apply(o).apply(obs.getWatchedValue());
