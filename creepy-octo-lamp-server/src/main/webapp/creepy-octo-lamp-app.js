@@ -71,20 +71,3 @@ app.service('keyboard', function ($document, $timeout, keyCodes) {
         return this;
     };
 });
-
-
-app.controller('sseTestController', function(serverEventWatcher){
-    var self = this;
-    self.watchrequest = '<p>start watching sse test service:</p> <p>newline works</p>';
-    self.init = function () {
-        serverEventWatcher.watchSSE('resources/sse/test/');
-        serverEventWatcher.watchEvent('test',self.handleTest);
-    };
-    
-    self.handleTest = function(event){
-        ev = document.getElementById('events');
-        ev.innerHTML += "<br>[NEW Event::"+event.type+"] " + event.data;
-    };
-    
-    self.init();
-});

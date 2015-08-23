@@ -34,20 +34,6 @@ public class ServerSentEventBoundary {
     }
 
     @GET
-    @Path("test")
-    public void test(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
-        new AsyncSSERunner(request, response).start(sseTestTask(response), 1000);
-    }
-
-    public ThrowingRunnable sseTestTask(HttpServletResponse response) throws IOException {
-        ServletOutputStream os = response.getOutputStream();
-        return () -> {
-            os.print(generateEvent("test"));
-            os.flush();
-        };
-    }
-
-    @GET
     @Path("serverscoped")
     public void serverEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
         AsyncSSERunner ar = new AsyncSSERunner(request, response);
