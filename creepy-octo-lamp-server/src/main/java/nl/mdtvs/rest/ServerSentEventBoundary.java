@@ -1,6 +1,10 @@
 package nl.mdtvs.rest;
 
-import java.io.IOException;
+import nl.mdtvs.models.WsDevice;
+import nl.mdtvs.rest.AsyncSSERunner.ThrowingRunnable;
+import nl.mdtvs.util.ObservedObjectManager;
+import nl.mdtvs.websocket.SessionHandler;
+
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -9,10 +13,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import nl.mdtvs.models.WsDevice;
-import nl.mdtvs.util.ObservedObjectManager;
-import nl.mdtvs.websocket.SessionHandler;
-import nl.mdtvs.rest.AsyncSSERunner.ThrowingRunnable;
+import java.io.IOException;
 
 @Path("/sse")
 public class ServerSentEventBoundary {
@@ -34,8 +35,7 @@ public class ServerSentEventBoundary {
     @GET
     @Path("test")
     public void test(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
-        AsyncSSERunner ar = new AsyncSSERunner(request, response);
-        ar.start(sseTestTask(response), 1000);
+        new AsyncSSERunner(request, response).start(sseTestTask(response), 1000);
     }
 
     public ThrowingRunnable sseTestTask(HttpServletResponse response) throws IOException {
@@ -44,12 +44,6 @@ public class ServerSentEventBoundary {
             os.print(generateEvent("test"));
             os.flush();
         };
-    }
-
-    @FunctionalInterface
-    public interface ThrowableFunction<T, R> {
-
-        R apply(T t) throws Exception;
     }
 
     @GET
@@ -62,7 +56,7 @@ public class ServerSentEventBoundary {
     public ThrowingRunnable sseServerScopedTask(HttpServletResponse response) throws IOException {
         ServletOutputStream os = response.getOutputStream();
         return () -> {
-            obsManager.addInitialObserveObject("DEVICES", () -> sh.getDevices());
+            obsManager.addInitialObserveObject("DEVICES", sh::getDevices);
             obsManager.onValueChange("DEVICES", os, changedListEventHandler());
         };
     }
@@ -89,14 +83,14 @@ public class ServerSentEventBoundary {
             WsDevice device;
             device = sh.getDevice(sessionid);
             obsManager.addInitialObserveObject(device.getSessionId(), () -> sh.getDevice(sessionid));
-            obsManager.onValueChange(device.getSessionId(), os, DisconnectedEventHandler());
+            obsManager.onValueChange(device.getSessionId(), os, disconnectedEventHandler());
 
             obsManager.addInitialObserveObject(device.getSessionId() + "terminalResponse", () -> sh.getDevice(sessionid).getTerminalResponse());
-            obsManager.onValueChange(device.getSessionId() + "terminalResponse", os, TerminalResponseEventHandler());
+            obsManager.onValueChange(device.getSessionId() + "terminalResponse", os, terminalResponseEventHandler());
         };
     }
 
-    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> TerminalResponseEventHandler() {
+    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> terminalResponseEventHandler() {
         return w -> o -> {
             w.print(generateEvent("clientTerminalResponse", o.toString()));
             w.flush();
@@ -104,7 +98,7 @@ public class ServerSentEventBoundary {
         };
     }
 
-    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> DisconnectedEventHandler() {
+    private ThrowableFunction<ServletOutputStream, ThrowableFunction<Object, Void>> disconnectedEventHandler() {
         return w -> o -> {
             if (o == null) {
                 w.print(generateEvent("clientAlive", "false"));
@@ -114,4 +108,9 @@ public class ServerSentEventBoundary {
         };
     }
 
+    @FunctionalInterface
+    public interface ThrowableFunction<T, R> {
+
+        R apply(T t) throws Exception;
+    }
 }

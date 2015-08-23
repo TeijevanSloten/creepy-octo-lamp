@@ -1,9 +1,9 @@
 package nl.mdtvs.util;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.function.Supplier;
-import javax.validation.constraints.NotNull;
 
 public class ObservedObject extends Observable {
 
@@ -28,9 +28,8 @@ public class ObservedObject extends Observable {
         }
         return false;
     }
-    
-    private String toString(Object value){
-        return new StringBuilder().append(value).toString();
+
+    private String toString(Object value) {
+        return value.toString();
     }
-    
 }

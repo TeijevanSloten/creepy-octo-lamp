@@ -30,6 +30,6 @@ public class AsyncSSERunner {
 
     @FunctionalInterface
     public interface ThrowingRunnable {
-        public void run() throws Exception;
+        void run() throws Exception;
     }
 }
