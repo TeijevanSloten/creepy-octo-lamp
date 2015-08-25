@@ -1,20 +1,17 @@
 package nl.mdtvs.rest;
 
-import nl.mdtvs.models.WsDevice;
-import nl.mdtvs.rest.AsyncSSERunner.ThrowingRunnable;
 import nl.mdtvs.util.ObservedObjectManager;
-import nl.mdtvs.util.ThrowableBiConsumer;
 import nl.mdtvs.websocket.SessionHandler;
 
 import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import java.io.IOException;
+import java.util.function.Function;
+import javax.ws.rs.PathParam;
+import nl.mdtvs.models.WsDevice;
 
 @Path("/sse")
 public class ServerSentEventBoundary {
@@ -35,59 +32,53 @@ public class ServerSentEventBoundary {
 
     @GET
     @Path("serverscoped")
-    public void serverEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
+    public void serverEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Throwable {
         AsyncSSERunner ar = new AsyncSSERunner(request, response);
-        ar.start(sseServerScopedTask(response), 1000);
+        
+        obsManager.addInitialObserveObject("DEVICES", sh::getDevices);
+        obsManager.onValueChange("DEVICES", changedListEventHandler());
+        ar.addListener("DEVICES", obsManager);
+        
+        ar.start(500);
     }
 
-    public ThrowingRunnable sseServerScopedTask(HttpServletResponse response) throws IOException {
-        ServletOutputStream os = response.getOutputStream();
-        return () -> {
-            obsManager.addInitialObserveObject("DEVICES", sh::getDevices);
-            obsManager.onValueChange("DEVICES", os, changedListEventHandler());
-        };
-    }
-
-    private ThrowableBiConsumer<ServletOutputStream, Object> changedListEventHandler() {
-        return (w, o) -> {
-            String e = generateEvent("updateClients");
-            w.print(e);
-            w.flush();
+    private Function<Object,String> changedListEventHandler() {
+        return (o) -> {
+            return generateEvent("updateClients");
         };
     }
 
     @GET
     @Path("sessionscoped/sessionid")
-    public void sessionEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response, @PathParam("sessionid") String sessionid) throws IOException {
+    public void sessionEventPusher(@Context HttpServletRequest request, @Context HttpServletResponse response, @PathParam("sessionid") String sessionid) throws Throwable {
         AsyncSSERunner ar = new AsyncSSERunner(request, response);
-        ar.start(sseSessionScopedTask(response, sessionid), 1000);
+        
+        WsDevice device;
+        device = sh.getDevice(sessionid);
+        
+        obsManager.addInitialObserveObject(device.getSessionId(), () -> sh.getDevice(sessionid));
+        obsManager.onValueChange(device.getSessionId(), disconnectedEventHandler());
+        ar.addListener(device.getSessionId(), obsManager);
+        
+        obsManager.addInitialObserveObject(device.getSessionId() + "terminalResponse", () -> sh.getDevice(sessionid).getTerminalResponse());
+        obsManager.onValueChange(device.getSessionId() + "terminalResponse", terminalResponseEventHandler());        
+        ar.addListener(device.getSessionId() + "terminalResponse", obsManager);
+        
+        ar.start(500);
     }
 
-    public ThrowingRunnable sseSessionScopedTask(HttpServletResponse response, String sessionid) throws IOException {
-        ServletOutputStream os = response.getOutputStream();
-        return () -> {
-            WsDevice device;
-            device = sh.getDevice(sessionid);
-            obsManager.addInitialObserveObject(device.getSessionId(), () -> sh.getDevice(sessionid));
-            obsManager.onValueChange(device.getSessionId(), os, disconnectedEventHandler());
-
-            obsManager.addInitialObserveObject(device.getSessionId() + "terminalResponse", () -> sh.getDevice(sessionid).getTerminalResponse());
-            obsManager.onValueChange(device.getSessionId() + "terminalResponse", os, terminalResponseEventHandler());
-        };
-    }
-
-    private ThrowableBiConsumer<ServletOutputStream, Object> terminalResponseEventHandler() {
-        return (w, o) -> {
-            w.print(generateEvent("clientTerminalResponse", o.toString()));
-            w.flush();
-        };
-    }
-
-    private ThrowableBiConsumer<ServletOutputStream, Object> disconnectedEventHandler() {
-        return (w, o) -> {
-            if (o == null) {
-                w.print(generateEvent("clientAlive", "false"));
-                w.flush();
+    private Function<Object,String> disconnectedEventHandler() {
+        return (o) -> {
+            return generateEvent("clientAlive", "false");
+            };
+    }    
+ 
+    private Function<Object,String> terminalResponseEventHandler() {
+        return (o) -> {
+            if(o != null){
+                return generateEvent("clientTerminalResponse", o.toString());
+            } else {
+                return generateEvent("clientTerminalResponse", "Error could not build event data");
             }
         };
     }

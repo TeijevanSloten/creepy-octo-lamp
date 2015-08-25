@@ -1,15 +1,17 @@
 package nl.mdtvs.util;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.servlet.ServletOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import nl.mdtvs.rest.Listener;
 
 @ApplicationScoped
-public class ObservedObjectManager {
+public class ObservedObjectManager implements Listener{
 
     private final Map<String, ObservedObject> obsList = new HashMap<>();
+    private final Map<String, Function<Object,String>> conList = new HashMap<>();
 
     public void addInitialObserveObject(String key, Supplier value) {
         if (!obsList.containsKey(key) && value.get() != null) {
@@ -17,10 +19,22 @@ public class ObservedObjectManager {
         }
     }
 
-    public void onValueChange(String key, ServletOutputStream o, ThrowableBiConsumer<ServletOutputStream, Object> f) throws Throwable {
+    public String onValueChange(String key, Function<Object,String> f) {
+        if(!conList.containsKey(key)) { conList.put(key, f); }
+        
         ObservedObject obs = obsList.get(key);
         if (obs.hasChanged()) {
-            f.consume(o, obs.getWatchedValue());
+            return f.apply(obs.getWatchedValue());
+        }
+        return null;
+    }
+
+    @Override
+    public String onValueChange(String key){
+        if(conList.containsKey(key)){
+            return onValueChange(key, conList.get(key));
+        } else {
+            throw new NullPointerException("key does not exist");
         }
     }
 }
